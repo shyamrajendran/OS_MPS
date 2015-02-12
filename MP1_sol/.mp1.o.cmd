@@ -618,7 +618,6 @@ deps_/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.o := \
   /usr/src/linux-headers-3.13.0-44-generic/arch/x86/include/asm/smap.h \
     $(wildcard include/config/x86/smap.h) \
   /usr/src/linux-headers-3.13.0-44-generic/arch/x86/include/asm/uaccess_64.h \
-  /home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1_given.h \
   include/linux/kthread.h \
   include/linux/sched.h \
     $(wildcard include/config/sched/debug.h) \
@@ -759,6 +758,7 @@ deps_/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.o := \
     $(wildcard include/config/associative/array.h) \
   include/linux/selinux.h \
     $(wildcard include/config/security/selinux.h) \
+  /home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1_given.h \
 
 /home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.o: $(deps_/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.o)
 

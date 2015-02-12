@@ -16,7 +16,9 @@
 #include <linux/list.h>
 #include <linux/timer.h>
 #include <linux/workqueue.h>
+#include <linux/kthread.h>
 #include "mp1_given.h"
+
 #define TIMER_DELAY 5000
 static DEFINE_MUTEX(lock);
 static LIST_HEAD(plist_head);
