@@ -36,11 +36,11 @@ ssize_t status_read(struct file *filp, char __user *buff,
     size_t count, loff_t *offp);
 ssize_t status_write(struct file *filp, const char __user *buff,
     size_t count, loff_t *offp);
-int is_pid_registered(long int target_pid);
+int _is_pid_registered(long int target_pid);
 int delete_process_list(void);
 int register_process(long int pid);
 int get_process_info_list_as_string(char *op);
-void periodic_timer_callback(unsigned long);
+void _periodic_timer_callback(unsigned long);
 void update_process_cpu_time(void);
 
 
@@ -68,7 +68,7 @@ static void queue_work_bottom_half(struct work_struct *p) {
     update_process_cpu_time();
 }
 
-void periodic_timer_callback(unsigned long p) {
+void _periodic_timer_callback(unsigned long p) {
     INIT_WORK((struct work_struct*)&process_work, queue_work_bottom_half);
     schedule_work(&process_work);
     //reset timer
@@ -97,7 +97,7 @@ int register_process(long int pid) {
     pnode->cpu_time = 0;
     
     mutex_lock(&lock);
-    if(is_pid_registered(pid)) {
+    if(_is_pid_registered(pid)) {
         printk(KERN_INFO "register_process::pid %ld already registerd", pid);
         retval = -EFAULT;
         goto exit;
@@ -111,7 +111,7 @@ exit:
     return retval;
 }
 
-int is_pid_registered(long int target_pid) {
+int _is_pid_registered(long int target_pid) {
     int retval = 0;
     process_meta_node *curr;
     list_for_each_entry(curr, &plist_head, list) {
@@ -228,7 +228,7 @@ static int __init mp1_module_init(void)
         goto exit;
     }
     
-    setup_timer(&periodic_timer, periodic_timer_callback, 0);
+    setup_timer(&periodic_timer, _periodic_timer_callback, 0);
     // 5 sec time interval for wakepup
     retval = mod_timer(&periodic_timer, jiffies + msecs_to_jiffies(TIMER_DELAY));
     if (retval) {
