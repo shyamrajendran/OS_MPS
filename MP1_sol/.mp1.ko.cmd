@@ -1,0 +1,1 @@
+cmd_/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.ko := ld -r -m elf_x86_64 -T /usr/src/linux-headers-3.13.0-44-generic/scripts/module-common.lds --build-id  -o /home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.ko /home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.o /home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.mod.o

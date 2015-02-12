@@ -43,15 +43,17 @@ void update_process_cpu_time(void);
 
 
 void update_process_cpu_time(void) {
-    process_meta_node *curr;
+    process_meta_node *curr, *next;
     mutex_lock(&lock);
     unsigned long cputime = 0;
-    list_for_each_entry(curr, &plist_head, list) {
-        //do something for each process node
-        //TBD: what to do??
+    list_for_each_entry_safe(curr, next, &plist_head, list) {
         /*if (get_cpu_use(curr->pid, &cputime) == 0) {
             curr->cpu_time = cputime;
-        }*/
+        } else if {
+            // remove the process from linkelist
+	    list_del(&curr->list);
+            kfree(curr);	
+	}*/
         curr->cpu_time++;
     }
     mutex_unlock(&lock);

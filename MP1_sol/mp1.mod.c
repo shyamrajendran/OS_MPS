@@ -17,23 +17,23 @@ __attribute__((section(".gnu.linkonce.this_module"))) = {
 static const struct modversion_info ____versions[]
 __used
 __attribute__((section("__versions"))) = {
-	{ 0x59caa4c3, __VMLINUX_SYMBOL_STR(module_layout) },
+	{ 0x9412fa01, __VMLINUX_SYMBOL_STR(module_layout) },
 	{ 0x801678, __VMLINUX_SYMBOL_STR(flush_scheduled_work) },
 	{ 0xc996d097, __VMLINUX_SYMBOL_STR(del_timer) },
-	{ 0x6ca47f1d, __VMLINUX_SYMBOL_STR(remove_proc_entry) },
+	{ 0x353c3b0c, __VMLINUX_SYMBOL_STR(remove_proc_entry) },
 	{ 0x593a99b, __VMLINUX_SYMBOL_STR(init_timer_key) },
-	{ 0xaed84047, __VMLINUX_SYMBOL_STR(proc_create_data) },
-	{ 0x6c979177, __VMLINUX_SYMBOL_STR(proc_mkdir) },
+	{ 0xcc72f4ce, __VMLINUX_SYMBOL_STR(proc_create_data) },
+	{ 0x45076c0d, __VMLINUX_SYMBOL_STR(proc_mkdir) },
 	{ 0x779a18af, __VMLINUX_SYMBOL_STR(kstrtoll) },
 	{ 0x4f6b400b, __VMLINUX_SYMBOL_STR(_copy_from_user) },
 	{ 0xd2b09ce5, __VMLINUX_SYMBOL_STR(__kmalloc) },
 	{ 0x37a0cba, __VMLINUX_SYMBOL_STR(kfree) },
 	{ 0x4f8b5ddb, __VMLINUX_SYMBOL_STR(_copy_to_user) },
-	{ 0x68565378, __VMLINUX_SYMBOL_STR(kmem_cache_alloc_trace) },
-	{ 0xdab9e674, __VMLINUX_SYMBOL_STR(kmalloc_caches) },
+	{ 0x6e938e79, __VMLINUX_SYMBOL_STR(kmem_cache_alloc_trace) },
+	{ 0x6d0fc37d, __VMLINUX_SYMBOL_STR(kmalloc_caches) },
 	{ 0x91715312, __VMLINUX_SYMBOL_STR(sprintf) },
-	{ 0x9f14c292, __VMLINUX_SYMBOL_STR(mutex_unlock) },
-	{ 0xaaa3b254, __VMLINUX_SYMBOL_STR(mutex_lock) },
+	{ 0x1eecf3fc, __VMLINUX_SYMBOL_STR(mutex_unlock) },
+	{ 0x91e14f04, __VMLINUX_SYMBOL_STR(mutex_lock) },
 	{ 0x27e1a049, __VMLINUX_SYMBOL_STR(printk) },
 	{ 0x8834396c, __VMLINUX_SYMBOL_STR(mod_timer) },
 	{ 0x7d11c268, __VMLINUX_SYMBOL_STR(jiffies) },
@@ -49,4 +49,4 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "D7B356A9B4723CB25B1392B");
+MODULE_INFO(srcversion, "713D1D4AF7D268EB9A022C8");
