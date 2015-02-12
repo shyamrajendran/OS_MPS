@@ -1,0 +1,52 @@
+#include <linux/module.h>
+#include <linux/vermagic.h>
+#include <linux/compiler.h>
+
+MODULE_INFO(vermagic, VERMAGIC_STRING);
+
+__visible struct module __this_module
+__attribute__((section(".gnu.linkonce.this_module"))) = {
+	.name = KBUILD_MODNAME,
+	.init = init_module,
+#ifdef CONFIG_MODULE_UNLOAD
+	.exit = cleanup_module,
+#endif
+	.arch = MODULE_ARCH_INIT,
+};
+
+static const struct modversion_info ____versions[]
+__used
+__attribute__((section("__versions"))) = {
+	{ 0x59caa4c3, __VMLINUX_SYMBOL_STR(module_layout) },
+	{ 0x801678, __VMLINUX_SYMBOL_STR(flush_scheduled_work) },
+	{ 0xc996d097, __VMLINUX_SYMBOL_STR(del_timer) },
+	{ 0x6ca47f1d, __VMLINUX_SYMBOL_STR(remove_proc_entry) },
+	{ 0x593a99b, __VMLINUX_SYMBOL_STR(init_timer_key) },
+	{ 0xaed84047, __VMLINUX_SYMBOL_STR(proc_create_data) },
+	{ 0x6c979177, __VMLINUX_SYMBOL_STR(proc_mkdir) },
+	{ 0x779a18af, __VMLINUX_SYMBOL_STR(kstrtoll) },
+	{ 0x4f6b400b, __VMLINUX_SYMBOL_STR(_copy_from_user) },
+	{ 0xd2b09ce5, __VMLINUX_SYMBOL_STR(__kmalloc) },
+	{ 0x37a0cba, __VMLINUX_SYMBOL_STR(kfree) },
+	{ 0x4f8b5ddb, __VMLINUX_SYMBOL_STR(_copy_to_user) },
+	{ 0x68565378, __VMLINUX_SYMBOL_STR(kmem_cache_alloc_trace) },
+	{ 0xdab9e674, __VMLINUX_SYMBOL_STR(kmalloc_caches) },
+	{ 0x91715312, __VMLINUX_SYMBOL_STR(sprintf) },
+	{ 0x9f14c292, __VMLINUX_SYMBOL_STR(mutex_unlock) },
+	{ 0xaaa3b254, __VMLINUX_SYMBOL_STR(mutex_lock) },
+	{ 0x27e1a049, __VMLINUX_SYMBOL_STR(printk) },
+	{ 0x8834396c, __VMLINUX_SYMBOL_STR(mod_timer) },
+	{ 0x7d11c268, __VMLINUX_SYMBOL_STR(jiffies) },
+	{ 0x3bd1b1f6, __VMLINUX_SYMBOL_STR(msecs_to_jiffies) },
+	{ 0x2e0d2f7f, __VMLINUX_SYMBOL_STR(queue_work_on) },
+	{ 0x2d3385d3, __VMLINUX_SYMBOL_STR(system_wq) },
+	{ 0xbdfb6dbb, __VMLINUX_SYMBOL_STR(__fentry__) },
+};
+
+static const char __module_depends[]
+__used
+__attribute__((section(".modinfo"))) =
+"depends=";
+
+
+MODULE_INFO(srcversion, "D7B356A9B4723CB25B1392B");

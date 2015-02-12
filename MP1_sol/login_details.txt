@@ -1,0 +1,4 @@
+login to <netid>@linux-a2.ews.illinois.edu : [ pass ur pass only :P ] 
+ssh cs423@sp15-cs423-g10.cs.illinois.edu
+PASSWORD : system$123 
+code directory @ /home/cs423/OS/MP1_sol/
