@@ -2,7 +2,7 @@
 #define __MP1_GIVEN_INCLUDE__
 
 #include <linux/pid.h>
-
+#include <linux/kthread.h>
 #define find_task_by_pid(nr) pid_task(find_vpid(nr), PIDTYPE_PID)
 
 //THIS FUNCTION RETURNS 0 IF THE PID IS VALID AND THE CPU TIME IS SUCCESFULLY RETURNED BY THE PARAMETER CPU_USE. OTHERWISE IT RETURNS -1

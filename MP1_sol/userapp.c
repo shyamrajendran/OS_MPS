@@ -21,8 +21,10 @@ int main(int argc, char* argv[])
     }
     int n = 10;
     int count = 0;
-    while (count++ < 100) {
-        printf("fact of %d is %ld\n", n, fact(n));
+    while (count++ < 50) {
+        fact(n);
+        sleep(2);
+        //printf("fact of %d is %ld\n", n, fact(n));
     }
     return 0;
 }

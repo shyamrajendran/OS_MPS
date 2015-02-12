@@ -16,14 +16,14 @@
 #include <linux/list.h>
 #include <linux/timer.h>
 #include <linux/workqueue.h>
-//#include "mp1_given.h"
+#include "mp1_given.h"
 #define TIMER_DELAY 5000
 static DEFINE_MUTEX(lock);
 static LIST_HEAD(plist_head);
 static struct timer_list periodic_timer ;
 struct work_struct process_work;
 typedef struct _process_meta_node {
-    long int pid;
+    int pid;
     unsigned long cpu_time;
     struct list_head list;
 } process_meta_node;
@@ -47,14 +47,16 @@ void update_process_cpu_time(void) {
     mutex_lock(&lock);
     unsigned long cputime = 0;
     list_for_each_entry_safe(curr, next, &plist_head, list) {
-        /*if (get_cpu_use(curr->pid, &cputime) == 0) {
+        if (get_cpu_use(curr->pid, &cputime) == 0) {
+            printk(KERN_INFO "cpu time for %d is %lu\n", curr->pid, cputime);
             curr->cpu_time = cputime;
-        } else if {
+        } else {
             // remove the process from linkelist
-	    list_del(&curr->list);
+            printk(KERN_INFO "remove pid%d from reg process list", curr->pid);
+	        list_del(&curr->list);
             kfree(curr);	
-	}*/
-        curr->cpu_time++;
+	    }
+        // curr->cpu_time++;
     }
     mutex_unlock(&lock);
 }
@@ -247,3 +249,4 @@ static void __exit mp1_module_exit(void)
 
 module_init(mp1_module_init);
 module_exit(mp1_module_exit);
+MODULE_LICENSE("GPL");
