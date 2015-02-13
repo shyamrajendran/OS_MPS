@@ -13,8 +13,7 @@ int get_cpu_use(int pid, unsigned long *cpu_use)
    task=find_task_by_pid(pid);
    if (task!=NULL)
    {  
-	    //*cpu_use=task->utime;
-	    unsigned long t = task->utime;
+	    *cpu_use=task->utime;
         rcu_read_unlock();
         return 0;
    }

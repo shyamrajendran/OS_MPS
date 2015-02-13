@@ -139,14 +139,7 @@ ssize_t status_read(struct file *filp, char __user *buff,
     static int finished = 0;
     int retval = 0;
 
-    if(finished) {
-        printk(KERN_INFO "proc read finished");
-        finished = 0;
-        retval = 0;
-        goto exit;
-    }
-
-    finished  = 1;
+    if (*offp > 0) return 0;
     char *temp=(char*)kmalloc(PAGE_SIZE*sizeof(char), GFP_KERNEL);
     if (temp == NULL) {
         retval = -ENOMEM;
@@ -164,6 +157,7 @@ ssize_t status_read(struct file *filp, char __user *buff,
         goto exit;
     }
     retval = size;
+    *offp += retval;
 exit:
     if(temp) {
         kfree(temp);
