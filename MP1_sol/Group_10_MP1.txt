@@ -1,0 +1,13 @@
+Module initialization - In module init we first make a directory "mp1" directory and a file under this heirarchy "status" using proc_mkdir and proc_create. "status" is given 0666 permssion. Then a timer is initialized using setup_timer function, and a callback handler is registered for this timer. (_periodic_timer_callback()). This will be the top half interrupt handler which needs to be short and cannot sleep or block. The timer expiry period is set up using mod_timer call. Its set to 5 seconds.
+
+Datastructures - To maintain a list of process, a linkedlist is create to store the process meta data viz process id, cpu time, and a pointer to nodes of same type. The process meta data is stored in a custom struct of type "_process_meta_node".
+The head of the linkedlist (plist_head) is initialized using LIST_HEAD macro. This linkedlist will be modified and read from asynchronously. So we define a mutex to achive a serialized access to the linkedist. The mutex is initialized using DEFINE_MUTEX macro.  
+File ops -  We expose read write capability to the mp1/status file. We register the handlers using a file_operations struct. Whenever user does a cat in the file, read handler "status_read()" gets called. When a pid is echod to the mp1/status file, "status_write" gets called. These hanlers can asynchrounous access the linked list.
+
+Timer interrupt handler -  When the timer expires, the registered handler _periodic_timer_callback gets called. Since this is a top half handler we cannot acquire a mutex lock on the linkedlist of process meta. So this function initializes a  work using INIT_WORK macro and queues it to the workqueue.
+The timer is the reset again to next 5 seconds using mod_timer call.
+
+Bottom half -  The bottom half is implemented in "queue_work_bottom_half()" function. In this function we first acquire lock to access the linkedlist. The helper function "get_cpu_use()" as provided in mp1_given.h, is used to get CPU time for the process id. If the function returns -1, then it means the process has ended and so this metadata node for this process is deleted from the linked list.
+
+
+File ops - When user performs a cat command on the "status" file, "status_read()" gets called. In this fucntion a pointer to the user buffer is provided. ...
