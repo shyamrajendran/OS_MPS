@@ -212,7 +212,7 @@ static int __init mp1_module_init(void)
         retval = -ENOMEM;
         goto exit;
     }
-    mp1_status = proc_create("status", 0666 /*S_IFREG | S_IRUGO | S_IWUGO*/, mp1_root, &mp1_fops);
+    mp1_status = proc_create("status", 0666, mp1_root, &mp1_fops);
     if (mp1_status == NULL) {
         retval = -ENOMEM;
         goto exit;
