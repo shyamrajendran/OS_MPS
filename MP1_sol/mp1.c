@@ -1,7 +1,3 @@
-/*  
- *  hello-2.c - Demonstrating the module_init() and module_exit() macros.
- *  This is preferred over using init_module() and cleanup_module().
- */
 #include <linux/module.h>   /* Needed by all modules */
 #include <linux/kernel.h>   /* Needed for KERN_INFO */
 #include <linux/init.h>     /* Needed for the macros */
@@ -210,7 +206,7 @@ static struct file_operations mp1_fops = {
 static int __init mp1_module_init(void)
 {
     int retval = 0;
-    printk(KERN_INFO "Hello, world 2\n");
+    printk(KERN_INFO "Module init called\n");
     mp1_root=proc_mkdir("mp1", NULL);
     if (mp1_root == NULL) {
         retval = -ENOMEM;
@@ -235,7 +231,7 @@ exit:
 
 static void __exit mp1_module_exit(void)
 {
-    printk(KERN_INFO "Goodbye, world 2\n");
+    printk(KERN_INFO "Module exit called\n");
     remove_proc_entry("status", mp1_root);
     remove_proc_entry("mp1",NULL);
     del_timer(&periodic_timer);
@@ -246,3 +242,4 @@ static void __exit mp1_module_exit(void)
 module_init(mp1_module_init);
 module_exit(mp1_module_exit);
 MODULE_LICENSE("GPL");
+MODULE_AUTHOR("rychwdh2, srajend2, sharma55, anair10");
