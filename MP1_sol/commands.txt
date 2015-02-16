@@ -1,0 +1,219 @@
+Script started on Sun 15 Feb 2015 11:30:58 PM CST
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ su[K[Kmake
+rm -f userapp *~ *.ko *.o *.mod.c Module.symvers modules.order
+make -C /lib/modules/3.13.0-44-generic/build M=/home/cs423/OS/MP1/OS_MPS/MP1_sol modules
+make[1]: Entering directory `/usr/src/linux-headers-3.13.0-44-generic'
+  CC [M]  /home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.o
+/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.c: In function ‘update_process_cpu_time’:
+/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.c:50:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+     unsigned long cputime = 0;
+     ^
+/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.c: In function ‘status_read’:
+/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.c:143:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+     char *temp=(char*)kmalloc(PAGE_SIZE*sizeof(char), GFP_KERNEL);
+     ^
+/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.c:148:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+     int size = get_process_info_list_as_string(temp);
+     ^
+/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.c:139:16: warning: unused variable ‘finished’ [-Wunused-variable]
+     static int finished = 0;
+                ^
+/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.c: In function ‘status_write’:
+/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.c:175:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+     char* input=(char*)kmalloc((count+1) * sizeof(char), GFP_KERNEL);
+     ^
+/home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.c:186:5: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+     long int pid = 0; 
+     ^
+  Building modules, stage 2.
+  MODPOST 1 modules
+  CC      /home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.mod.o
+  LD [M]  /home/cs423/OS/MP1/OS_MPS/MP1_sol/mp1.ko
+make[1]: Leaving directory `/usr/src/linux-headers-3.13.0-44-generic'
+gcc -o userapp userapp.c
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ suo [K[K[K[Kls [Kmod | grep mp1
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ sudo insmod mo[Kp1.ko 
+[sudo] password for cs423: 
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ sudo insmod mp1.ko [3Plsmod | grep mp1
+[01;31m[Kmp1[m[K                    13108  0 
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ ls /proc/cpuinfo [K[K[K[K[K[K[K[K[K/mp1/status 
+/proc/mp1/status
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ ls /proc/mp1/status [C[C[2P[1@c[1@a[1@t
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ ./userapp ^C
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ vi userapp.[K^C
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ w
+ 23:32:59 up 8 days,  2:07,  1 user,  load average: 0.01, 0.02, 0.05
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+cs423    pts/1    linux-a2.ews.ill 23:30    3.00s  0.06s  0.00s script -a commands.txt
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ vi mp1.c 
+[?1049h[?1h=[2;1H▽[6n[1;1H  [1;1H[1;44r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[44;1H"mp1.c" 248L, 6685C[>c[1;1H[38;5;130m  1 [m[34m/*  [m
+[38;5;130m  2 [m[34m *  hello-2.c - Demonstrating the module_init() and module_exit() macros.[m
+[38;5;130m  3 [m[34m *  This is preferred over using init_module() and cleanup_module().[m
+[38;5;130m  4 [m[34m */[m
+[38;5;130m  5 [m[35m#include [m[31m<linux/module.h>[m   [34m/* Needed by all modules */[m
+[38;5;130m  6 [m[35m#include [m[31m<linux/kernel.h>[m   [34m/* Needed for KERN_INFO */[m
+[38;5;130m  7 [m[35m#include [m[31m<linux/init.h>[m     [34m/* Needed for the macros */[m
+[38;5;130m  8 
+  9 [m[35m#include [m[31m<linux/proc_fs.h>[m
+[38;5;130m 10 [m[35m#include [m[31m<linux/string.h>[m
+[38;5;130m 11 [m[35m#include [m[31m<linux/vmalloc.h>[m
+[38;5;130m 12 [m[35m#include [m[31m<linux/slab.h>[m
+[38;5;130m 13 [m[35m#include [m[31m<asm/uaccess.h>[m
+[38;5;130m 14 [m[35m#include [m[31m<linux/jiffies.h>[m
+[38;5;130m 15 [m[35m#include [m[31m<linux/fs.h>[m
+[38;5;130m 16 [m[35m#include [m[31m<linux/list.h>[m
+[38;5;130m 17 [m[35m#include [m[31m<linux/timer.h>[m
+[38;5;130m 18 [m[35m#include [m[31m<linux/workqueue.h>[m
+[38;5;130m 19 [m[35m#include [m[31m<linux/kthread.h>[m
+[38;5;130m 20 [m[35m#include [m[31m"mp1_given.h"[m
+[38;5;130m 21 
+ 22 [m[35m#define TIMER_DELAY [m[31m5000[m
+[38;5;130m 23 [m[32mstatic[m DEFINE_MUTEX(lock);
+[38;5;130m 24 [m[32mstatic[m LIST_HEAD(plist_head);
+[38;5;130m 25 [m[32mstatic[m [32mstruct[m timer_list periodic_timer ;
+[38;5;130m 26 [m[32mstruct[m work_struct process_work;
+[38;5;130m 27 [m[32mtypedef[m [32mstruct[m _process_meta_node {
+[38;5;130m 28 [m    [32mint[m pid;
+[38;5;130m 29 [m    [32munsigned[m [32mlong[m cpu_time;
+[38;5;130m 30 [m    [32mstruct[m list_head list;
+[38;5;130m 31 [m} process_meta_node;
+[38;5;130m 32 
+ 33 [m[32mstatic[m [32mstruct[m proc_dir_entry *mp1_root;
+[38;5;130m 34 [m[32mstatic[m [32mstruct[m proc_dir_entry *mp1_status;
+[38;5;130m 35 [m[32mssize_t[m status_read([32mstruct[m file *filp, [32mchar[m __user *buff,
+[38;5;130m 36 [m    [32msize_t[m count, loff_t *offp);
+[38;5;130m 37 [m[32mssize_t[m status_write([32mstruct[m file *filp, [32mconst[m [32mchar[m __user *buff,
+[38;5;130m 38 [m    [32msize_t[m count, loff_t *offp);
+[38;5;130m 39 [m[32mint[m _is_pid_registered([32mlong[m [32mint[m target_pid);
+[38;5;130m 40 [m[32mint[m delete_process_list([32mvoid[m);
+[38;5;130m 41 [m[32mint[m register_process([32mlong[m [32mint[m pid);
+[38;5;130m 42 [m[32mint[m get_process_info_list_as_string([32mchar[m *op);
+[38;5;130m 43 [m[32mvoid[m _periodic_timer_callback([32munsigned[m [32mlong[m);[44;153H1,1[11CTop[1;5H[?12l[?25h[?25l[44;153H2[2;5H[?12l[?25h[?25l[44;153H3[3;5H[?12l[?25h[?25l[44;153H4[4;5H[?12l[?25h[?25l[44;153H5[5;5H[?12l[?25h[?25l[44;153H6[6;5H[?12l[?25h[?25l[44;153H7[7;5H[?12l[?25h[?25l[44;153H8,0-1[8;5H[?12l[?25h[?25l[44;153H9,1  [9;5H[?12l[?25h[?25l[44;153H10,1[10;5H[?12l[?25h[?25l[44;154H1[11;5H[?12l[?25h[?25l[44;154H2[12;5H[?12l[?25h[?25l[44;154H3[13;5H[?12l[?25h[?25l[44;154H4[14;5H[?12l[?25h[?25l[44;154H5[15;5H[?12l[?25h[?25l[44;154H6[16;5H[?12l[?25h[?25l[44;154H7[17;5H[?12l[?25h[?25l[44;154H8[18;5H[?12l[?25h[?25l[44;154H9[19;5H[?12l[?25h[?25l[44;153H20[20;5H[?12l[?25h[?25l[44;154H1,0-1[21;5H[?12l[?25h[?25l[44;154H2,1  [22;5H[?12l[?25h[?25l[44;154H3[23;5H[?12l[?25h[?25l[44;154H4[24;5H[?12l[?25h[?25l[44;154H5[25;5H[?12l[?25h[?25l[44;154H6[26;5H[?12l[?25h[?25l[44;154H7[27;5H[?12l[?25h[?25l[44;154H8[28;5H[?12l[?25h[?25l[44;154H9[29;5H[?12l[?25h[?25l[44;153H30[30;5H[?12l[?25h[?25l[27;39H[106m{[31;5H}[m[44;154H1[31;5H[?12l[?25h[?25l[27;39H{[31;5H}[44;154H2,0-1[32;5H[?12l[?25h[?25l[44;154H3,1  [33;5H[?12l[?25h[?25l[44;154H4[34;5H[?12l[?25h[?25l[44;154H5[35;5H[?12l[?25h[?25l[44;154H6[36;5H[?12l[?25h[?25l[44;154H7[37;5H[?12l[?25h[?25l[44;154H8[38;5H[?12l[?25h[?25l[44;154H9[39;5H[?12l[?25h[?25l[44;153H40[40;5H[?12l[?25h[?25l[44;154H1[41;5H[?12l[?25h[?25l[44;154H2[42;5H[?12l[?25h[?25l[44;154H3[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 44 [m[32mvoid[m update_process_cpu_time([32mvoid[m);[44;1H[K[44;153H44,1[11C0%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 45 [m[44;153H[K[44;153H45,0-1[9C0%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 46 [m[44;153H[K[44;153H46,0-1[9C1%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 47 [m[32mvoid[m update_process_cpu_time([32mvoid[m) {[44;153H[K[44;153H47,1[11C1%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 48 [m    process_meta_node *curr, *next;[44;153H[K[44;153H48,1[11C2%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 49 [m    mutex_lock(&lock);[44;153H[K[44;153H49,1[11C2%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 50 [m    [32munsigned[m [32mlong[m cputime = [31m0[m;[44;153H[K[44;153H50,1[11C3%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 51 [m    list_for_each_entry_safe(curr, next, &plist_head, list) {[44;153H[K[44;153H51,1[11C3%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 52 [8Cif[m (get_cpu_use(curr->pid, &cputime) == [31m0[m) {[44;153H[K[44;153H52,1[11C4%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 53 [m[12Cprintk(KERN_INFO [31m"cpu time for [m[35m%d[m[31m is [m[35m%lu\n[m[31m"[m, curr->pid, cputime);[44;153H[K[44;153H53,1[11C4%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 54 [m[12Ccurr->cpu_time = cputime;[44;153H[K[44;153H54,1[11C5%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 55 [m[8C} [38;5;130melse[m {[44;153H[K[44;153H55,1[11C5%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 56 [m[12C[34m// remove the process from linkelist[m[44;153H[K[44;153H56,1[11C6%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 57 [m[12Cprintk(KERN_INFO [31m"remove pid[m[35m%d[m[31m from reg process list"[m, curr->pid);[44;153H[K[44;153H57,1[11C6%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 58 [m[12Clist_del(&curr->list);[44;153H[K[44;153H58,1-4[9C7%[43;8H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 59 [m[12Ckfree(curr);[44;153H[K[44;153H59,1[11C7%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 60 [m[8C}[44;153H[K[44;153H60,1-4[9C8%[43;8H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 61 [m[8C[34m// curr->cpu_time++;[m[44;153H[K[44;153H61,1[11C8%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 62 [m    }[44;153H[K[44;153H62,1[11C9%[43;5H[?12l[?25h[?25l[1;43r[43;1H
+[1;44r[43;1H[38;5;130m 63 [m    mutex_unlock(&lock);[44;153H[K[44;153H63,1[11C9%[43;5H[?12l[?25h[?25l[44;153H[K[44;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[44;1H[K[44;1H[?1l>[?12l[?25h[?1049l]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ dmseg | tail[C[C[1P[C[1@e[C[1P[1@s
+[699457.325297] bottom half calledbottom half called
+[699467.350846] bottom half calledbottom half called
+[699477.376375] bottom half calledbottom half called
+[699487.401949] bottom half calledbottom half called
+[699497.427425] bottom half calledbottom half called
+[699507.453009] bottom half calledbottom half called
+[699517.478534] bottom half calledbottom half called
+[699527.504053] bottom half calledbottom half called
+[699537.529636] bottom half calledbottom half called
+[699547.555182] bottom half called
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ vi userapp
+[?1049h[?1h=[2;1H▽[6n[1;1H  [1;1H[1;44r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[44;1H"userapp" [noeol][converted] 15L, 9266C[>c[1;1H[38;5;130m  1 [m[34m^?[mELF[34m^B^A^A^@^@^@^@^@^@^@^@^@^B^@[m>[34m^@^A^@^@^@<90>^E[m@[34m^@^@^@^@^@[m@[34m^@^@^@^@^@^@^@<90>^Q^@^@^@^@^@^@^@^@^@^@[m@[34m^@[m8[34m^@[m    [34m^@[m@[34m^@^^^@^[^@^F^@^@^@^E^@^@^@[m@[34m^@^@^@^@^@^@^@[m@[34m^@[m@[34m^@^@^@@[m[2;1H[38;5;130m    [m[34m^@^@[m@[34m^@[m@[34m^@^@^@^@^@[mø[34m^A^@^@^@^@^@^@[mø[34m^A^@^@^@^@^@^@^H^@^@^@^@^@^@^@^C^@^@^@^D^@^@^@[m8[34m^B^@^@^@^@^@^@[m8[34m^B[m@[34m^@^@^@^@^@[m8[34m^B[m@[34m^@^@^@^@^@^\^@^@^@^@^@^@^@^\^@^@^@^@^@^@^@^A^@^@^@^@^^[m[3;1H[38;5;130m    [m[34m@^@^@^A^@^@^@^E^@^@^@^@^@^@^@^@^@^@^@^@^@[m@[34m^@^@^@^@^@^@^@[m@[34m^@^@^@^@^@[ml    [34m^@^@^@^@^@^@[ml   [34m^@^@^@^@^@^@^@^@[m [34m^@^@^@^@^@^A^@^@^@^F^@^@^@^P^N^@^@^@^@^@^@^P^N[m`[34m^@^@^@^@^@^P^NN[m[4;1H[38;5;130m    [m`[34m^@^@^@^@^@[mP[34m^B^@^@^@^@^@^@[mX[34m^B^@^@^@^@^@^@^@^@[m [34m^@^@^@^@^@^B^@^@^@^F^@^@^@[m([34m^N^@^@^@^@^@^@[m([34m^N[m`[34m^@^@^@^@^@[m([34m^N[m`[34m^@^@^@^@^@[mÐ[34m^A^@^@^@^@^@^@[mÐ[34m^A^@^@^@^@^@^@^H^@^@^@^@^@^@^@^D^@^^[m[5;1H[38;5;130m    [m[34m@^@^D^@^@^@[mT[34m^B^@^@^@^@^@^@[mT[34m^B[m@[34m^@^@^@^@^@[mT[34m^B[m@[34m^@^@^@^@^@[mD[34m^@^@^@^@^@^@^@[mD[34m^@^@^@^@^@^@^@^D^@^@^@^@^@^@^@[mPåtd[34m^D^@^@^@^\^H^@^@^@^@^@^@^\^H[m@[34m^@^@^@^@^@^\^H[m@[34m^@^@^@^@^@[m<[34m^@^@^@^^[m[6;1H[38;5;130m    [m[34m@^@^@^@[m<[34m^@^@^@^@^@^@^@^D^@^@^@^@^@^@^@[mQåtd[34m^F^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^P^@^@^@^@^@^@^@[mRåtd[34m^D^@^@^@^P^N^@^@@[m[7;1H[38;5;130m    [m[34m^@^@^@^@^P^N[m`[34m^@^@^@^@^@^P^N[m`[34m^@^@^@^@^@[mð[34m^A^@^@^@^@^@^@[mð[34m^A^@^@^@^@^@^@^A^@^@^@^@^@^@^@[m/lib64/ld-linux-x86-64.so.2[34m^@^D^@^@^@^P^@^@^@^A^@^@^@[mGNU[34m^@^@^@^@^@^B^@^@^@^F^@^@^@@[m[8;1H[38;5;130m    [m[34m^X^@^@^@^D^@^@^@^T^@^@^@^C^@^@^@[mGNU[34m^@[mï_7Ò[34m^?[mHß[34m<83>[mX"8pQ#ÐwKÐ[34m<97>[mX[34m^A^@^@^@^A^@^@^@^A^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@@[m[9;1H[38;5;130m    [m[34m^@^@^@^@^@[m$[34m^@^@^@^R^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^S^@^@^@^R^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@[m+[34m^@^@^@^R^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^L^@^@^@^R^@^@@[m[10;1H[38;5;130m    [m[34m^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@[m2[34m^@^@^@^R^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@[mD[34m^@^@^@[m [34m^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^K^@^@^@^R^@^@^@^@^@^@^@^@^@^@^@^@^@^@^^[m[11;1H[38;5;130m    [m[34m@^@^@^@^@^@[mlibc.so.6[34m^@[msprintf[34m^@[m__stack_chk_fail[34m^@[mgetpid[34m^@[msystem[34m^@[m__libc_start_main[34m^@[m__gmon_start__[34m^@[mGLIBC_2.4[34m^@[mGLIBC_2.2.5[34m^@^@^@^@^B^@^C^@^B^@^B^@^B^@^@^@^B^@^@^@^@^@@[m[12;1H[38;5;130m    [m[34m^@^@^A^@^B^@^A^@^@^@^P^@^@^@^@^@^@^@^T[mii[34m^M^@^@^C^@[mS[34m^@^@^@^P^@^@^@[mu[34m^Z[mi [34m^@^@^B^@[m][34m^@^@^@^@^@^@^@[mø[34m^O[m`[34m^@^@^@^@^@^F^@^@^@^F^@^@^@^@^@^@^@^@^@^@^@^X^P[m`[34m^@^@^@^@^@^G^@^@^@^A^@@[m[13;1H[38;5;130m    [m[34m^@^@^@^@^@^@^@^@^@^@[m [34m^P[m`[34m^@^@^@^@^@^G^@^@^@^B^@^@^@^@^@^@^@^@^@^@^@[m([34m^P[m`[34m^@^@^@^@^@^G^@^@^@^C^@^@^@^@^@^@^@^@^@^@^@[m0[34m^P[m`[34m^@^@^@^@^@^G^@^@^@^D^@^@^@^@^@^@^@^@^@^@^@[m8[34m^P[m`[34m^@^@@[m[14;1H[38;5;130m    [m[34m^@^@^@^G^@^@^@^E^@^@^@^@^@^@^@^@^@^@^@[m@[34m^P[m`[34m^@^@^@^@^@^G^@^@^@^F^@^@^@^@^@^@^@^@^@^@^@[mH[34m^P[m`[34m^@^@^@^@^@^G^@^@^@^G^@^@^@^@^@^@^@^@^@^@^@[mH[34m<83>[mì[34m^H[mH[34m<8b>^E^E^K[m [34m^@[mH[34m<85>[mÀt[34m^E[mès[34m^@^^[m[15;1H[38;5;130m    [m[34m@^@[mH[34m<83>[mÄ[34m^H[mÃ[34m^@^@^@^@^@^@^@^@^@^@^@^@^@^@[mÿ5ò
+[38;5;130m  2 [m [34m^@[mÿ%ô
+[38;5;130m  3 [m [34m^@^O^_[m@[34m^@[mÿ%ò
+[38;5;130m  4 [m [34m^@[mh[34m^@^@^@^@[méàÿÿÿÿ%ê
+[38;5;130m  5 [m [34m^@[mh[34m^A^@^@^@[méÐÿÿÿÿ%â
+[38;5;130m  6 [m [34m^@[mh[34m^B^@^@^@[méÀÿÿÿÿ%Ú
+[38;5;130m  7 [m [34m^@[mh[34m^C^@^@^@[mé°ÿÿÿÿ%Ò
+[38;5;130m  8 [m [34m^@[mh[34m^D^@^@^@[mé ÿÿÿÿ%Ê
+[38;5;130m  9 [m [34m^@[mh[34m^E^@^@^@[mé[34m<90>[mÿÿÿÿ%Â
+[38;5;130m 10 [m [34m^@[mh[34m^F^@^@^@[mé[34m<80>[mÿÿÿ1íI[34m<89>[mÑ^H[34m<89>[mâH[34m<83>[mäðPTIÇÀÐ[34m^G[m@[34m^@[mHÇÁ`[34m^G[m@[34m^@[mHÇÇ´[34m^F[m@[34m^@[mè§ÿÿÿôf[34m^O^_[mD[34m^@^@[m¸g[34m^P[m`[34m^@[mUH-`[34m^P[m`[34m^@[mH[34m<83>[mø[34m^N[mH[34m<89>[måw[34m^B[m]Ã¸[34m^@^@^@^@[mH[34m<85>[mÀtô]¿`[34m^P[m`[34m^@[mÿà[34m^O^_<80>^@^@^@^@[m¸ [25;1H[38;5;130m    [m`[34m^P[m`[34m^@[mUH-`[34m^P[m`[34m^@[mHÁø[34m^C[mH[34m<89>[måH[34m<89>[mÂHÁê?H[34m^A[mÐHÑøu[34m^B[m]Ãº[34m^@^@^@^@[mH[34m<85>[mÒtô]H[34m<89>[mÆ¿`[34m^P[m`[34m^@[mÿâ[34m^O^_<80>^@^@^@^@<80>[m=)
+[38;5;130m 11 [m [34m^@^@[mu[34m^Q[mUH[34m<89>[måè~ÿÿÿ]Æ[34m^E^V[m
+[38;5;130m 12 [m [34m^@^A[móÃ[34m^O^_[m@[34m^@[mH[34m<83>[m=È[34m^G[m [34m^@^@[mt[34m^^[m¸[34m^@^@^@^@[mH[34m<85>[mÀt[34m^T[mU¿ [34m^N[m`[34m^@[mH[34m<89>[måÿÐ]é{ÿÿÿ[34m^O^_^@[mésÿÿÿUH[34m<89>[måSH[34m<83>[mì[34m^X<89>[m}ì[34m<83>[m}ì[34m^A^?^G[m¸[34m^A^@^@^@[më[34m^W<8b>[mEìHcØ[34m<8b>[mEì[34m<83>[mè[34m^A<89>[mÇèÔÿÿÿH[34m^O[m¯ÃHH[28;1H[38;5;130m    [m[34m<83>[mÄ[34m^X[m[]ÃUH[34m<89>[måH[34m<81>[mì[34m<90>^@^@^@<89>[m½|ÿÿÿH[34m<89>[mµpÿÿÿdH[34m<8b>^D[m%([34m^@^@^@[mH[34m<89>[mEø1Àè@þÿÿ[34m<89>[mE[34m<80><8b>[mU[34m<80>[mH[34m<8d>[mE[34m<90>[m¾è[34m^G[m@[34m^@[mH[34m<89>[mÇ¸[34m^@^@^@^@[mè[34m<84>[mþÿÿH[34m<8d>[mE[34m<90>[mH[34m<89>[mÇè8þÿÿ[34m<89>[mEE[29;1H[38;5;130m    [m[34m<84><83>[m}[34m<84>^@[mt%¿[34m^G^H[m@[34m^@[m¸[34m^@^@^@^@[mè0þÿÿ¸ÿÿÿÿH[34m<8b>[mMødH3[34m^L[m%([34m^@^@^@[mt!ë[34m^Z[mÇE[34m<88>[m
+[38;5;130m 13 [m[34m^@^@^@[mÇE[34m<8c>^@^@^@^@<8b>[mE[34m<88><89>[mÇè/ÿÿÿëôèÛýÿÿÉÃf[34m^O^_<84>^@^@^@^@^@[mAWA[34m<89>[mÿAVI[34m<89>[möAUI[34m<89>[mÕATL[34m<8d>[m%[34m<98>^F[m [34m^@[mUH[34m<8d>[m-[34m<98>^F[m [34m^@[mSL)å1ÛHÁý[34m^C[mH[34m<83>[mì[34m^H[mèUýÿÿH[34m<85>[mít[34m^^^O^_<84>^^[m[31;1H[38;5;130m    [m[34m@^@^@^@^@[mL[34m<89>[mêL[34m<89>[möD[34m<89>[mÿAÿ[34m^T[mÜH[34m<83>[mÃ[34m^A[mH9ëuêH[34m<83>[mÄ[34m^H[m[]A\A]A^A_Ãff.[34m^O^_<84>^@^@^@^@^@[móÃ[34m^@^@[mH[34m<83>[mì[34m^H[mH[34m<83>[mÄ[34m^H[mÃ[34m^@^@^@^A^@^B^@^@^@^@^@[msudo echo %d >/proc/mp1/status[34m^@[mfaill[32;1H[38;5;130m    [med to run cmd[34m^@^@^@^@^A^[^C[m;8[34m^@^@^@^F^@^@^@[môüÿÿ[34m<84>^@^@^@[mtýÿÿT[34m^@^@^@[maþÿÿ¬[34m^@^@^@<98>[mþÿÿÌ[34m^@^@^@[mDÿÿÿì[34m^@^@^@[m´ÿÿÿ4[34m^A^@^@^T^@^@^@^@^@^@^@^A[mzR[34m^@^A[mx[34m^P^A^[^L^G^H<90>^A^G^P^T^@@[m[33;1H[38;5;130m    [m[34m^@^@^\^@^@^@^X[mýÿÿ*[34m^@^@^@^@^@^@^@^@^@^@^@^T^@^@^@^@^@^@^@^A[mzR[34m^@^A[mx[34m^P^A^[^L^G^H<90>^A^@^@[m$[34m^@^@^@^\^@^@^@[mhüÿÿ[34m<80>^@^@^@^@^N^P[mF[34m^N^X[mJ[34m^O^K[mw[34m^H<80>^@[m?[34m^Z[m;*3$"[34m^@^@^@^@^\^@^@^@[mDD[34;1H[38;5;130m    [m[34m^@^@^@[m­ýÿÿ7[34m^@^@^@^@[mA[34m^N^P<86>^B[mC[34m^M^F[mE[34m<83>^C[mm[34m^L^G^H^\^@^@^@[md[34m^@^@^@[mÄýÿÿ£[34m^@^@^@^@[mA[34m^N^P<86>^B[mC[34m^M^F^B<9e>^L^G^H^@^@[mD[34m^@^@^@<84>^@^@^@[mPþÿÿe[34m^@^@^@^@[mB[34m^N^P<8f>^B[mE[34m^N^X<8e>^C[mE[34m^N[m [34m<<[m[35;1H[38;5;130m    [m[34m8d>^D[mE[34m^N[m([34m<8c>^E[mH[34m^N[m0[34m<86>^F[mH[34m^N[m8[34m<83>^G[mM[34m^N[m@l[34m^N[m8A[34m^N[m0A[34m^N[m(B[34m^N[m B[34m^N^X[mB[34m^N^P[mB[34m^N^H^@^T^@^@^@[mÌ[34m^@^@^@[mxþÿÿ[34m^B^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^^[m[36;1H[38;5;130m    [m[34m@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^^[m[37;1H[38;5;130m    [m[34m@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^^[m[38;1H[38;5;130m    [m[34m@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^^[m[39;1H[38;5;130m    [m[34m@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^^[m[40;1H[38;5;130m    [m[34m@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^^[m[41;1H[38;5;130m    [m[34m@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^^[m[42;1H[38;5;130m    [m[34m@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^^[m[43;1H[38;5;130m    [m[34m@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^[m[30;1H[94m@                                                                                                                                                                         [31;1H@                                                                                                                                                                         [32;1H@                                                                                                                                                                         [33;1H@                                                                                                                                                                         [34;1H@                                                                                                                                                                         [35;1H@                                                                                                                                                                         [36;1H@                                                                                                                                                                         [37;1H@                                                                                                                                                                         [38;1H@                                                                                                                                                                         [39;1H@                                                                                                                                                                         [40;1H@                                                                                                                                                                         [41;1H@                                                                                                                                                                         [42;1H@                                                                                                                                                                         [43;1H@                                                                                                                                                                         [m[44;153H1,1[11CTop[1;5H[?12l[?25h[?25l[44;1H[K[44;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[44;1H[K[44;1H[?1l>[?12l[?25h[?1049l]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ vi userapp.c 
+[?1049h[?1h=[2;1H▽[6n[1;1H  [1;1H[1;44r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[44;1H"userapp.c" 28L, 491C[>c[1;1H[38;5;130m  1 [m[35m#include [m[31m"userapp.h"[m
+[38;5;130m  2 [m[35m#include [m[31m<unistd.h>[m
+[38;5;130m  3 [m[35m#include [m[31m<stdio.h>[m
+[38;5;130m  4 [m[35m#include [m[31m<stdlib.h>[m
+[38;5;130m  5 
+  6 
+  7 [m[32mlong[m [32mint[m fact([32mint[m n) {
+[38;5;130m  8 [m    [38;5;130mif[m (n <= [31m1[m) [38;5;130mreturn[m [31m1[m;
+[38;5;130m  9 [m    [38;5;130mreturn[m n * fact(n-[31m1[m);
+[38;5;130m 10 [m}
+[38;5;130m 11 
+ 12 [m[32mint[m main([32mint[m argc, [32mchar[m* argv[])
+[38;5;130m 13 [m{
+[38;5;130m 14 [m    pid_t id = getpid();
+[38;5;130m 15 [m    [32mchar[m cmd[[31m100[m];
+[38;5;130m 16 [m    sprintf(cmd, [31m"sudo echo [m[35m%d[m[31m >/proc/mp1/status"[m, id);
+[38;5;130m 17 [m    [32mint[m ret = system(cmd);
+[38;5;130m 18 [m    [38;5;130mif[m (ret != [31m0[m) {
+[38;5;130m 19 [m[8Cprintf([31m"failed to run cmd"[m);
+[38;5;130m 20 [8Creturn[m -[31m1[m;
+[38;5;130m 21 [m    }
+[38;5;130m 22 [m    [32mint[m n = [31m10[m;
+[38;5;130m 23 [m    [32mint[m count = [31m0[m;
+[38;5;130m 24 [m    [38;5;130mwhile[m ([31m1[m) {
+[38;5;130m 25 [m[8Cfact(n);
+[38;5;130m 26 [m    }
+[38;5;130m 27 [m    [38;5;130mreturn[m [31m0[m;
+[38;5;130m 28 [m}
+[94m~                                                                                                                                                                         [30;1H~                                                                                                                                                                         [31;1H~                                                                                                                                                                         [32;1H~                                                                                                                                                                         [33;1H~                                                                                                                                                                         [34;1H~                                                                                                                                                                         [35;1H~                                                                                                                                                                         [36;1H~                                                                                                                                                                         [37;1H~                                                                                                                                                                         [38;1H~                                                                                                                                                                         [39;1H~                                                                                                                                                                         [40;1H~                                                                                                                                                                         [41;1H~                                                                                                                                                                         [42;1H~                                                                                                                                                                         [43;1H~                                                                                                                                                                         [m[44;153H1,1[11CAll[1;5H[?12l[?25h[?25l[44;1H[K[44;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[44;1H[K[44;1H[?1l>[?12l[?25h[?1049l]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ ./userapp 
+^C
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ ./userapp  &
+[1] 30480
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ [18P(reverse-i-search)`':[C[14@c': vi userapp.c[9@a': cat /proc/mp1/status[1@t[C[C[C]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ cat /proc/mp1/status 
+ 30480: 0
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ cat /proc/mp1/status 
+ 30480: 4208000000
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ cat /proc/mp1/status 
+ 30480: 4208000000
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ cat /proc/mp1/status 
+ 30480: 4208000000
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ cat /proc/mp1/status 
+ 30480: 4208000000
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ [18P(reverse-i-search)`':[Cd': dmesg | tail[1@m[C[C[C]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ dmesg | tail[C[C[C[C[C[C[C[C[C[C[C[C
+[699547.555182] bottom half calledbottom half called
+[699557.580766] bottom half calledbottom half called
+[699567.606262] bottom half calledbottom half called
+[699577.631795] bottom half calledregister_process::pid 30476 added
+[699579.923198] pid  30476 registeredbottom half called
+[699582.644571] remove pid30476 from reg process listregister_process::pid 30480 added
+[699583.439983] pid  30480 registeredbottom half called
+[699587.657297] cpu time for 30480 is 4208000000
+[699592.670061] bottom half called
+[699592.670067] cpu time for 30480 is 9212000000
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ dmesg | tailcat /proc/mp1/status 
+ 30480: 29236000000
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ cat /proc/mp1/status 
+ 30480: 29236000000
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ cat /proc/mp1/status 
+ 30480: 34244000000
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ fg
+./userapp
+^C
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ fgcat /proc/mp1/status 
+ 30480: 39252000000
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ cat /proc/mp1/status 
+ 30480: 39252000000
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ cat /proc/mp1/status 
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ cat /proc/mp1/status 
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ sudo rmmod mp1
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ dmsudo rmmod mp1cat /proc/mp1/status fg[Kcat /proc/mp1/status [9Pdmesg | tailcat /proc/mp1/status [9P./userapp  &[K[3@vi userapp.c[C[Kdmesg | tail[3Pvi mp1.c dmesg | tail
+[699607.708375] bottom half called
+[699607.708381] cpu time for 30480 is 24228000000
+[699612.721146] bottom half called
+[699612.721152] cpu time for 30480 is 29236000000
+[699617.733921] bottom half called
+[699617.733927] cpu time for 30480 is 34244000000
+[699622.746680] bottom half called
+[699622.746686] cpu time for 30480 is 39252000000
+[699627.759528] bottom half called
+[699627.759533] remove pid30480 from reg process list<6>[699634.910528] Goodbye, world 2
+]0;cs423@cs423-vm: ~/OS/MP1/OS_MPS/MP1_solcs423@cs423-vm:~/OS/MP1/OS_MPS/MP1_sol$ exit
+exit
+
+Script done on Sun 15 Feb 2015 11:34:59 PM CST
