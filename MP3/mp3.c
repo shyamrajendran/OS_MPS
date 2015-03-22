@@ -91,6 +91,7 @@ exit:
 }
 
 struct file_operations mp3_cdev_fops = {
+    .owner = THIS_MODULE,
     .open = cdevice_open,
     .release = cdevice_release,
     .mmap = cdevice_map,
@@ -481,6 +482,9 @@ static int __init mp3_module_init(void)
         }
         goto exit; 
     }
+    int maj_dev_num =  MAJOR(mp3_dev_num);
+    int min_dev_num =  MINOR(mp3_dev_num);
+    printk(KERN_INFO "major=%d, minor=%d\n", maj_dev_num, min_dev_num);
     retval = add_cdevice_obj();
     if (retval != 0) {
         printk(KERN_INFO "failed to alloc device object\n");
