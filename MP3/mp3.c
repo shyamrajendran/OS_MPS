@@ -168,7 +168,6 @@ static void collect_profile_sample(void) {
     // defensive check. should never exceed!!
     printk(KERN_INFO "write_index=%lu\n", samples_buffer_write_index);
     if (samples_buffer_write_index >= 0 && samples_buffer_write_index + 4 <= max_samples) {
-        //sample_num++;
         printk(KERN_INFO "sample num=%lu\n", sample_num);
         samples_buffer[samples_buffer_write_index] = jiffies;
         for (i = 1; i < 4; i++) {
@@ -178,9 +177,7 @@ static void collect_profile_sample(void) {
         printk(KERN_ALERT "something went wrong in write index:%lu\n", samples_buffer_write_index);
     }
     // wrap around the write counter if needed
-    //if (samples_buffer_write_index >= max_samples) samples_buffer_write_index = 0;
-    // TBD: fix the double counting issue
-    samples_buffer_write_index  = (samples_buffer_write_index + 2) % max_samples;
+    samples_buffer_write_index  = (samples_buffer_write_index + 4) % max_samples;
 }
 
 int delete_process_list() {
@@ -266,6 +263,12 @@ int register_process(int pid) {
     list_add(&pnode->list, &plist_head);
     // schedule the work queue if this is the first process
     if (empty) {
+        // before starting delayed work, reset write pointer
+        // and flush stale data in samples buffer
+        // set the buffer to zero
+        memset (samples_buffer, 0, NUM_PAGES * PAGE_SIZE);
+        // write pointer in the cyclic quue
+        samples_buffer_write_index = 0;
         printk(KERN_INFO "first process! schedule work\n");
         schedule_workqueue_job();
     }
