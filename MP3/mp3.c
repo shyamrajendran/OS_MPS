@@ -197,7 +197,7 @@ int get_process_info_list_as_string(char *buff) {
     process_meta_node *curr;
     mutex_lock(&lock);
     list_for_each_entry(curr, &plist_head, list) {
-        size += sprintf(buff, "%s %d\n", buff, curr->pid);
+        size = sprintf(buff, "%s %d\n", buff, curr->pid);
     }
     mutex_unlock(&lock);
     return size; 
