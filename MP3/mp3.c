@@ -1,6 +1,6 @@
-#include <linux/module.h>   /* Needed by all modules */
-#include <linux/kernel.h>   /* Needed for KERN_INFO */
-#include <linux/init.h>     /* Needed for the macros */
+#include <linux/module.h>   
+#include <linux/kernel.h>   
+#include <linux/init.h>     
 
 #include <linux/proc_fs.h>
 #include <linux/string.h>
@@ -32,6 +32,7 @@ static unsigned long max_samples;
 static dev_t mp3_dev_num;
 static struct cdev* mp3_dev_obj;
 
+// augmented PCB
 typedef struct _process_meta_node {
     int pid;
     unsigned long cpu_util;
@@ -43,36 +44,36 @@ typedef struct _process_meta_node {
 
 static struct proc_dir_entry *mp3_root;
 static struct proc_dir_entry *mp3_status;
-ssize_t status_read(struct file *filp, char __user *buff,
+ssize_t _status_read(struct file *filp, char __user *buff,
     size_t count, loff_t *offp);
-ssize_t status_write(struct file *filp, const char __user *buff,
+ssize_t _status_write(struct file *filp, const char __user *buff,
     size_t count, loff_t *offp);
 int _is_pid_registered(long int target_pid);
 int get_process_info_list_as_string(char *op);
 int register_process(int pid);
 int delete_process_list(void);
-static void work_callback(void* data);
-static void delete_workq(void);
-static int schedule_workqueue_job(void);
+static void _work_callback(void* data);
+static void _delete_workq(void);
+static int _schedule_workqueue_job(void);
 static void collect_profile_sample(void);
-static int alloc_cdevice_num(void);
-static int free_cdevice_num(void);
-static int add_cdevice_obj(void);
-static void remove_cdevice_obj(void);
+static int _alloc_cdevice_num(void);
+static int _free_cdevice_num(void);
+static int _add_cdevice_obj(void);
+static void _remove_cdevice_obj(void);
 
-static int cdevice_open(struct inode* p, struct file* f)
+static int _cdevice_open(struct inode* p, struct file* f)
 {
     printk(KERN_INFO "%s open called\n", DEVICE_NAME);
     return 0;
 }
 
-static int cdevice_release(struct inode* node, struct file* f)
+static int _cdevice_release(struct inode* node, struct file* f)
 {
     printk(KERN_NOTICE "%s release called\n", DEVICE_NAME);
     return 0;
 }
 
-static int cdevice_map(struct file* f, struct vm_area_struct* varea) {
+static int _cdevice_map(struct file* f, struct vm_area_struct* varea) {
     int i = 0;
     int retval = 0;
     int num_elements_per_page = PAGE_SIZE / sizeof(unsigned long);
@@ -89,51 +90,51 @@ static int cdevice_map(struct file* f, struct vm_area_struct* varea) {
 exit:
     return retval;
 }
-
+// fops for the character device
 struct file_operations mp3_cdev_fops = {
     .owner = THIS_MODULE,
-    .open = cdevice_open,
-    .release = cdevice_release,
-    .mmap = cdevice_map,
+    .open = _cdevice_open,
+    .release = _cdevice_release,
+    .mmap = _cdevice_map,
 };
 
-static int alloc_cdevice_num(void) {
+static int _alloc_cdevice_num(void) {
     int retval = 0;
     //  Dynamic Allocation of Major Numbers
     if (alloc_chrdev_region(&mp3_dev_num, 0, 1, DEVICE_NAME) != 0) {
         retval = -ENOMEM;
     }
-    printk(KERN_INFO "alloc_cdevice_num retval=%d", retval);
+    printk(KERN_INFO "_alloc_cdevice_num retval=%d", retval);
     return retval;
 }
 
-static int free_cdevice_num(void) {
+static int _free_cdevice_num(void) {
     unregister_chrdev_region(mp3_dev_num, 1);
     return 0;
 }
 
-static void remove_cdevice_obj(void) {
+static void _remove_cdevice_obj(void) {
     if (mp3_dev_obj) {
         cdev_del(mp3_dev_obj);
         mp3_dev_obj = NULL;
     }
 }
-static int add_cdevice_obj(void) {
+static int _add_cdevice_obj(void) {
     int retval = 0;
     mp3_dev_obj = cdev_alloc();
     if (mp3_dev_obj == NULL) {
         retval = -ENOMEM;
-        free_cdevice_num();
+        _free_cdevice_num();
         goto exit;
     }
 
     mp3_dev_obj->ops = &mp3_cdev_fops;
     if (cdev_add(mp3_dev_obj, mp3_dev_num, 1) < 0) { 
-        free_cdevice_num();
+        _free_cdevice_num();
         retval = -ENOMEM;
         goto exit;
     }
-    printk(KERN_INFO "add_cdevice_obj retval=%d", retval);
+    printk(KERN_INFO "_add_cdevice_obj retval=%d", retval);
 exit:
     return retval;
 }
@@ -192,6 +193,7 @@ int delete_process_list() {
     return 0;
 }
 
+// returns the list of registered process as a string
 int get_process_info_list_as_string(char *buff) {
     int size = 0;
     process_meta_node *curr;
@@ -203,6 +205,8 @@ int get_process_info_list_as_string(char *buff) {
     return size; 
 }
 
+// this function is called from register, which already holds a lock
+// so donot acquire mutex lock again
 int _is_pid_registered(long int target_pid) {
     int retval = 0;
     process_meta_node *curr;
@@ -226,7 +230,7 @@ int unregister_process(int target_pid) {
             if (list_empty(&plist_head) > 0) {
                 // last process deleted
                 // destroy workqueue
-                delete_workq();
+                _delete_workq();
             }
             retval = 0;
             goto exit;
@@ -270,7 +274,7 @@ int register_process(int pid) {
         // write pointer in the cyclic quue
         samples_buffer_write_index = 0;
         printk(KERN_INFO "first process! schedule work\n");
-        schedule_workqueue_job();
+        _schedule_workqueue_job();
     }
     printk(KERN_INFO "pid %d added", pid);
     retval = 0; 
@@ -279,7 +283,7 @@ exit:
     return retval;
 }
 
-ssize_t status_read(struct file *filp, char __user *buff,
+ssize_t _status_read(struct file *filp, char __user *buff,
     size_t count, loff_t *offp)  {
     int retval = 0;
     printk(KERN_INFO "status read called");
@@ -310,7 +314,7 @@ exit:
     return retval;
 }
 
-ssize_t status_write(struct file *filp, const char __user *buff,
+ssize_t _status_write(struct file *filp, const char __user *buff,
     size_t count, loff_t *offp) {
     int retval = 0;
     if (count > PAGE_SIZE) {
@@ -365,50 +369,12 @@ exit:
     return retval;
 }
 
-/*
-void _periodic_timer_callback(unsigned long);
-void update_process_cpu_time(void);
 
-
-void update_process_cpu_time(void) {
-    process_meta_node *curr, *next;
-    mutex_lock(&lock);
-    unsigned long cputime = 0;
-    list_for_each_entry_safe(curr, next, &plist_head, list) {
-        if (get_cpu_use(curr->pid, &cputime) == 0) {
-            printk(KERN_INFO "cpu time for %d is %lu\n", curr->pid, cputime);
-            curr->cpu_time = cputime;
-        } else {
-            // remove the process from linkelist
-            printk(KERN_INFO "remove pid%d from reg process list", curr->pid);
-	        list_del(&curr->list);
-            kfree(curr);	
-	    }
-        // curr->cpu_time++;
-    }
-    mutex_unlock(&lock);
-}
-
-static void queue_work_bottom_half(struct work_struct *p) {
-    printk(KERN_INFO "bottom half called");
-    update_process_cpu_time();
-}
-
-void _periodic_timer_callback(unsigned long p) {
-    INIT_WORK((struct work_struct*)&process_work, queue_work_bottom_half);
-    schedule_work(&process_work);
-    //reset timer
-    if (mod_timer(&periodic_timer, jiffies + msecs_to_jiffies(TIMER_DELAY))) {
-        printk(KERN_INFO "error in mod_timer");
-    }
-}
-
-*/
 /*
  * this funciton first checks if workq is initialized, if not
  * create a workq and schedule a job
  **/
-static int schedule_workqueue_job(void) {
+static int _schedule_workqueue_job(void) {
     int retval = 0;
     if (!workq) {
         // if queue null, create the work queue before firing jobs on it
@@ -418,13 +384,13 @@ static int schedule_workqueue_job(void) {
             goto exit;
         }
     }
-    INIT_DELAYED_WORK((struct delayed_work*)&mp3_delayed_work, work_callback);
+    INIT_DELAYED_WORK((struct delayed_work*)&mp3_delayed_work, _work_callback);
     queue_delayed_work(workq, (struct delayed_work*)&mp3_delayed_work, msecs_to_jiffies(WORK_DELAY));
 exit:
     return retval;
 }
 
-static void delete_workq(void) {
+static void _delete_workq(void) {
     if (workq) {
         printk(KERN_INFO "delete workq");
         if (cancel_delayed_work((struct delayed_work*)&mp3_delayed_work) == 0) {
@@ -435,15 +401,15 @@ static void delete_workq(void) {
     }
 }
 
-static void work_callback(void* data) {
-    printk(KERN_INFO "work_callback called!\n");
+static void _work_callback(void* data) {
+    printk(KERN_INFO "_work_callback called!\n");
     collect_profile_sample();
-    schedule_workqueue_job();
+    _schedule_workqueue_job();
 }
 
 static struct file_operations mp3_fops = {
-    .read = status_read,
-    .write = status_write,
+    .read = _status_read,
+    .write = _status_write,
 };
 
 static int __init mp3_module_init(void)
@@ -476,7 +442,7 @@ static int __init mp3_module_init(void)
     printk(KERN_INFO "ulong size=%lu", sizeof(unsigned long));
     max_samples = (NUM_PAGES * PAGE_SIZE) / sizeof(unsigned long);
     printk(KERN_INFO "max_samples:%lu\n", max_samples);
-    retval = alloc_cdevice_num();
+    retval = _alloc_cdevice_num();
     if (retval != 0) {
         printk(KERN_INFO "failed to alloc major device num\n");
         if (samples_buffer) {
@@ -488,7 +454,7 @@ static int __init mp3_module_init(void)
     int maj_dev_num =  MAJOR(mp3_dev_num);
     int min_dev_num =  MINOR(mp3_dev_num);
     printk(KERN_INFO "major=%d, minor=%d\n", maj_dev_num, min_dev_num);
-    retval = add_cdevice_obj();
+    retval = _add_cdevice_obj();
     if (retval != 0) {
         printk(KERN_INFO "failed to alloc device object\n");
         if (samples_buffer) {
@@ -507,10 +473,10 @@ static void __exit mp3_module_exit(void)
     printk(KERN_INFO "Module exit called\n");
     remove_proc_entry("status", mp3_root);
     remove_proc_entry("mp3",NULL);
-    delete_workq();
+    _delete_workq();
     delete_process_list();
-    free_cdevice_num();
-    remove_cdevice_obj();
+    _free_cdevice_num();
+    _remove_cdevice_obj();
     if (samples_buffer) {
         vfree(samples_buffer);
     }
