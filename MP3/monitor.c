@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
   int i;
 
   // Open the char device and mmap()
-  buf = buf_init("/dev/node");
+  buf = buf_init("node");
   if(!buf)
     return -1;
   // Read and print profiled data
