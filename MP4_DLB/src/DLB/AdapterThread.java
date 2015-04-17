@@ -2,6 +2,7 @@ package DLB;
 
 import DLB.Utils.Job;
 import DLB.Utils.Message;
+import DLB.Utils.MessageType;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -24,11 +25,15 @@ public class AdapterThread extends Thread {
         throttlingValue = tValue;
     }
 
-    private void adapterWork() {
-        Message incomingMsg = messages.poll();
+    private void adapterWork() throws InterruptedException {
+        Message incomingMsg = messages.take();
         System.out.println("Adapter Thread Working with Message " + incomingMsg);
         // sleep switch worker
         // queue check - call function accordingly
+    }
+
+    protected synchronized void addMessage(Message msg) {
+        messages.add(msg);
     }
 
     private void bootstrapJobs() {
@@ -42,12 +47,14 @@ public class AdapterThread extends Thread {
                 arr[j - i] = MainThread.vectorA[j];
             }
             Job<Double> job = new Job<Double>(i, i + jobItems, arr);
+            Double[] doubles = job.getData();
             MainThread.jobQueue.add(job);
         }
         long t2 = System.currentTimeMillis();
         System.out.println("First Job = " + MainThread.jobQueue.getFirst());
         System.out.println("Time taken = " + (t2 -t1));
-        MainThread.transferManagerThread.
+        Message msg = new Message(MessageType.JOBTRANSFER, 5);
+        MainThread.transferManagerThread.addMessage(msg);
     }
 
     @Override
@@ -55,7 +62,12 @@ public class AdapterThread extends Thread {
         if (MainThread.isLocal)
             bootstrapJobs();
         while (!MainThread.STOP_SIGNAL) {
-            adapterWork();
+            try {
+                adapterWork();
+            } catch (InterruptedException ie) {
+                ie.printStackTrace();
+                MainThread.stop();
+            }
         }
     }
 }
