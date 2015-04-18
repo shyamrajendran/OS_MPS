@@ -39,19 +39,23 @@ public class CommunicationThread extends Thread {
 
         if (incomingMsg instanceof Message) {
             try {
+                Message msg = (Message) incomingMsg;
+                switch (msg.getMsgType()) {
+                    case JOBTRANSFER:
+                        List<Job> list = (List<Job>) msg.getData();
+                        TransferManagerThread.addJobs(list);
+                        break;
+                    case JOBRESULT:
+                        System.out.println("Got result from remote node");
+                        Job resultJob = (Job) msg.getData();
+                        MainThread.addToResult(resultJob);
+                        break;
+                    default:
+                        System.out.println("Unknown message");
+                }
                 //Class<?> theClass = Class.forName("DLB.Utils.Message");
                 //(Message) theClass.cast(message);
-                Message msg = (Message) incomingMsg;
-                List<Job<Double>> list = (List<Job<Double>>) msg.getData();
-                for (Job<Double> job : list) {
-                    System.out.println("Job Data ----->");
-                    System.out.println(job.getStartIndex() + " " + job.getEndIndex());
-                    Object[] data = job.getData();
-                    for (Object element : data) {
-                        System.out.print(element + " ");
-                    }
-                    System.out.println();
-                }
+
             } catch (ClassCastException e) {
                 e.printStackTrace();
                 //System.out.println(e.getMessage());
