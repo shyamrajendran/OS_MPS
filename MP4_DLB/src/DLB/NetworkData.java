@@ -48,11 +48,17 @@ public class NetworkData {
     }
 
     public static double startMetricTest() throws SigarException, InterruptedException {
-//        while (true) {
+        double t = 0;
+        
+        for(int i=0; i<2;i++) {
             Long[] m = getMetric();
             double totalrx = m[0];
             double totaltx = m[1];
-            return totalrx + totaltx;
+            if (i == 1 ){
+                return t;
+            } else {
+                t+=totalrx+totaltx;
+            }
 //            System.out.print("totalrx(download): ");
 //            System.out.println("\t" + Sigar.formatSize(totalrx));
 //            System.out.print("totaltx(upload): ");
@@ -60,7 +66,8 @@ public class NetworkData {
 //            System.out.println("-----------------------------------");
 //            Thread.sleep(1000);
 //        }
-
+        }
+        return t;
     }
 
     public static Long[] getMetric() throws SigarException {

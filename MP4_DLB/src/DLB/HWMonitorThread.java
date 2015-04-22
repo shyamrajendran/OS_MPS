@@ -42,7 +42,7 @@ public class HWMonitorThread extends Thread {
     }
 
     private double getNwUsage() throws InterruptedException, SigarException {
-        System.out.println("INSIDE NETWORK ");
+        System.out.println("INSIDE NETWORK");
         return NetworkData.startMetricTest();
 //        try {
 //            net = sigar.getNetStat();
