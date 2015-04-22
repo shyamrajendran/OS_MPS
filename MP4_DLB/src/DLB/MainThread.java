@@ -25,6 +25,7 @@ public class MainThread {
     protected static CommunicationThread communicationThread;
     protected static UIThread uithread;
     protected volatile static boolean STOP_SIGNAL;
+    protected volatile static double GUARD;
 
     protected static int numJobs = 1024;
     protected static int numWorkerThreads = 1;
@@ -180,6 +181,7 @@ public class MainThread {
 
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, SigarException {
         isLocal = !true;
+        MainThread.GUARD = 0.5;
         MainThread.transferFlag = 0;// 0 default only queue length
         if (args.length >= 1 && args[0].equals("remote"))
             isLocal = false;
@@ -190,7 +192,9 @@ public class MainThread {
         if (args.length >= 4)
             port = Integer.parseInt(args[3]);
         if (args.length >= 5)
-            MainThread.transferFlag = Integer.parseInt(args[4]);
+            MainThread.GUARD = Integer.parseInt(args[4]);
+        if (args.length >= 6)
+            MainThread.transferFlag = Integer.parseInt(args[6]);
 
         MainThread mainThread = new MainThread();
         mainThread.connect(ip, port);

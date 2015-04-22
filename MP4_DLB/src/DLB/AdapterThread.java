@@ -51,6 +51,9 @@ public class AdapterThread extends Thread {
             break;
 
             case 1:
+//                x * bytesperjob / bw = (jobqlength - x) * timetocomplteonejob * throttlefactor
+//                lhs  =  rhs - gaurd
+
                 break;
         }
 
