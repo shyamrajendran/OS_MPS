@@ -3,6 +3,7 @@ package DLB;
 import DLB.Utils.Job;
 import DLB.Utils.Message;
 import DLB.Utils.MessageType;
+import DLB.Utils.SystemStat;
 import org.hyperic.sigar.SigarException;
 import sun.applet.Main;
 
@@ -48,6 +49,7 @@ public class MainThread {
     protected static Socket otherSocket;
     protected volatile static Socket mySocket;
     protected volatile static int transferFlag;
+    protected volatile static double timePerJob;
 
 
     protected static int machineId = 0;
@@ -61,7 +63,7 @@ public class MainThread {
 
     private static int elementsDone;
 
-    protected static double throttlingValue = 0.9;
+    protected volatile static double throttlingValue = 0.9;
 
 
 
@@ -179,6 +181,22 @@ public class MainThread {
 
     }
 
+    public void timePerJobCalc(){
+        int elementsPerJob = MainThread.numElements / MainThread.numJobs;
+        long timeTotal= 0 ;
+        for(int i = 0 ;i < 10 ;i++ ){ // calculating 10 times average
+            long t1 = System.currentTimeMillis();
+            double[] data = new double[elementsPerJob];
+            Arrays.fill(data, MainThread.initVal);
+            for (int j = 0; j < elementsPerJob; j++) { // a job unit
+                data[j] = data[j] + MainThread.addVal;
+            }
+            long t2 = System.currentTimeMillis();
+            timeTotal+=(t2-t1);
+        }
+        System.out.println("TOTAL TIME FOR 10 JOBS in ms : " + timeTotal);
+        MainThread.timePerJob = ((double)(timeTotal)/10);
+    }
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, SigarException {
         isLocal = !true;
         MainThread.GUARD = 0.5;
@@ -198,6 +216,8 @@ public class MainThread {
             MainThread.transferFlag = Integer.parseInt(args[6]);
 
         MainThread mainThread = new MainThread();
+        mainThread.timePerJobCalc();
+        System.out.println("TIME PER JOB ON MACHINE ID #"+ MainThread.machineId + " IS (in ms) :" + MainThread.timePerJob);
         mainThread.connect(ip, port);
 
         communicationThread.sendMessage("Got connection from " + port);
