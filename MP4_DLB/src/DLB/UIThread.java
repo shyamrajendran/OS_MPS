@@ -1,45 +1,50 @@
 package DLB;
-
-import DLB.Utils.Message;
-import sun.applet.Main;
+import DLB.Utils.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
- * Created by manshu on 4/16/15.
+ * Created by saikat on 4/21/15.
  */
-public class StateManagerThread extends Thread {
-
+public class UIThread extends Thread {
     private BlockingQueue<Message> messages;
+    static Map<Integer, StateInfo> machineStateMap;
 
-    public StateManagerThread() {
+    UIThread() {
+        System.out.println("UI thread starting on local node");
         messages = new LinkedBlockingDeque<Message>();
+        machineStateMap = new HashMap<Integer, StateInfo>();
     }
 
-    protected void addMessage(Message msg) {
+    protected synchronized void addMessage(Message msg) {
         messages.add(msg);
     }
 
-    private void stateTransferWork() throws IOException, InterruptedException {
+    private void getStates() throws IOException, InterruptedException {
         Message incomingMsg = messages.take();
         switch (incomingMsg.getMsgType()) {
+            case HW:
+                int machineId = incomingMsg.getMachineId();
+                StateInfo machineState = (StateInfo) incomingMsg.getData();
+                System.out.println("UI thread got msg from machine:" + machineId);
+                machineStateMap.put(machineId, machineState);
+                break;
             default:
-                MainThread.communicationThread.sendMessage(incomingMsg);
-                // if local node SM then send a msg to UI thread
-                if (MainThread.isLocal) {
-                    MainThread.uithread.addMessage(incomingMsg);
-                }
+                System.out.println("unknown msg to ui thread");
                 break;
         }
     }
 
     @Override
     public void run() {
+        super.run();
         while (!MainThread.STOP_SIGNAL) {
             try {
-                stateTransferWork();
+                getStates();
             } catch (InterruptedException e) {
                 //e.printStackTrace();
                 System.out.println("Cannot continue w/o connection");
@@ -50,5 +55,6 @@ public class StateManagerThread extends Thread {
                 MainThread.stop();
             }
         }
+
     }
 }

@@ -22,7 +22,7 @@ public class MainThread {
     protected static AdapterThread adapterThread;
     protected static HWMonitorThread hwMonitorThread;
     protected static CommunicationThread communicationThread;
-
+    protected static UIThread uithread;
     protected volatile static boolean STOP_SIGNAL;
 
     protected static int numJobs = 1024;
@@ -58,9 +58,9 @@ public class MainThread {
 
     private static int elementsDone;
 
-    protected static double throttlingValue = 0.4;
+    protected static double throttlingValue = 0.9;
     protected static boolean isLocal = !true;
-    protected static String ip = "172.17.116.149";//"jalatif2.ddns.net"; //"localhost";
+    protected static String ip = "localhost";//"172.17.116.149";//"jalatif2.ddns.net"; //"localhost";
     protected static int port = 2211;
 
     public MainThread() throws IOException, SigarException {
@@ -69,6 +69,10 @@ public class MainThread {
         hwMonitorThread = new HWMonitorThread();
         adapterThread = new AdapterThread();
         communicationThread = new CommunicationThread();
+        if (isLocal) {
+            // ui thread should run only on local node
+            uithread = new UIThread();
+        }
     }
 
     public void start() throws InterruptedException {
@@ -87,6 +91,9 @@ public class MainThread {
         adapterThread.start();
         transferManagerThread.start();
         stateManagerThread.start();
+        if (isLocal) {
+            uithread.start();
+        }
     }
 
     protected static synchronized void addToResult(Job job) {

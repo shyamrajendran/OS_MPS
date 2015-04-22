@@ -58,7 +58,7 @@ public class CommunicationThread extends Thread {
                         synchronized (MainThread.jobInComingLock) {
                             MainThread.jobsInComing = true;
                         }
-                        System.out.println("Number of jobs that are coming starting are " + (int) msg.getData());
+                        System.out.println("Number of jobs that are coming starting are " + (Integer) msg.getData());
                         System.out.println("Current jobs are " + MainThread.jobQueue.size());
                         break;
 
@@ -107,6 +107,10 @@ public class CommunicationThread extends Thread {
                     case HW:
                         System.out.println("Got HW State");
                         MainThread.adapterThread.addMessage(msg);
+                        // if local node then forward the message to ui thread also
+                        if (MainThread.isLocal) {
+                            MainThread.uithread.addMessage(msg);
+                        }
                         break;
                     default:
                         System.out.println("Unknown message");
