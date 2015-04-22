@@ -57,6 +57,19 @@ public class AdapterThread extends Thread {
 //                WorkerThread.timePerJob * MainThread.throttlingValue;
                 double remoteMetrics = sRemote.getTimePerJob() * sRemote.getQueueLength() * sRemote.getThrottlingValue();
                 double localMetrics = sLocal.getTimePerJob() * sLocal.getQueueLength() * sLocal.getThrottlingValue();
+                int remoteQ = sRemote.getQueueLength();
+                int localQ = sLocal.getQueueLength();
+                int jobsToSend =0 ;
+                if (localMetrics > remoteMetrics + MainThread.GUARD) {
+                    while ((localMetrics - remoteMetrics) <= MainThread.GUARD){
+                        localQ--;
+                        remoteMetrics = sRemote.getTimePerJob() * sRemote.getQueueLength() * sRemote.getThrottlingValue();
+                        localMetrics = sLocal.getTimePerJob() * sLocal.getQueueLength() * sLocal.getThrottlingValue();
+                        jobsToSend++;
+                    }
+                Message msg = new Message(MainThread.machineId, MessageType.JOBTRANSFER, jobsToSend);
+                System.out.println("Matching expected time to finish by sending " + jobsToSend + " number of jobs");
+                MainThread.transferManagerThread.addMessage(msg);
                 break;
         }
 
