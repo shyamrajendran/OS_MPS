@@ -42,7 +42,7 @@ public class AdapterThread extends Thread {
     private void workTransferCalc(StateInfo sRemote, StateInfo sLocal, int transferFlag) {
 
         switch (MainThread.transferFlag) {
-            case 0:
+            case 0: // case when only queue length is considered.
                 if ((sLocal.getQueueLength() - sRemote.getQueueLength()) > MainThread.queueDifferenceThreshold) {
                     int jobsToSend = (sLocal.getQueueLength() - sRemote.getQueueLength()) / 2;
                     Message msg = new Message(MainThread.machineId, MessageType.JOBTRANSFER, jobsToSend);
@@ -51,7 +51,7 @@ public class AdapterThread extends Thread {
                 }
             break;
 
-            case 1:
+            case 1: // case when time to completion is considered.
 //                x * bytesperjob / bw = (jobqlength - x) * timetocomplteonejob * throttlefactor
 //                lhs  =  rhs - gaurd
 //                WorkerThread.timePerJob * MainThread.throttlingValue;
@@ -60,11 +60,11 @@ public class AdapterThread extends Thread {
                 int remoteQ = sRemote.getQueueLength();
                 int localQ = sLocal.getQueueLength();
                 int jobsToSend =0 ;
+
                 if (localMetrics > remoteMetrics + MainThread.GUARD) {
-                    while ((localMetrics - remoteMetrics) <= MainThread.GUARD){
+                    while ((localMetrics - remoteMetrics) >= MainThread.GUARD){
                         localQ--;
-                        remoteMetrics = sRemote.getTimePerJob() * sRemote.getQueueLength() * sRemote.getThrottlingValue();
-                        localMetrics = sLocal.getTimePerJob() * sLocal.getQueueLength() * sLocal.getThrottlingValue();
+                        localMetrics = sLocal.getTimePerJob() * localQ * sLocal.getThrottlingValue();
                         jobsToSend++;
                     }
                 Message msg = new Message(MainThread.machineId, MessageType.JOBTRANSFER, jobsToSend);
