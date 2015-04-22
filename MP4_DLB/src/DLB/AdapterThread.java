@@ -59,8 +59,9 @@ public class AdapterThread extends Thread {
                 double localMetrics = sLocal.getTimePerJob() * sLocal.getQueueLength() * sLocal.getThrottlingValue();
                 int remoteQ = sRemote.getQueueLength();
                 int localQ = sLocal.getQueueLength();
-                int jobsToSend =0 ;
-
+                int jobsToSend = 0 ;
+                System.out.println("SLOCAL IS " + sLocal);
+                System.out.println("SREMOTE IS " + sRemote);
                 if (localMetrics > remoteMetrics + MainThread.GUARD) {
                     while ((localMetrics - remoteMetrics) >= MainThread.GUARD) {
                         localQ--;
@@ -94,6 +95,7 @@ public class AdapterThread extends Thread {
             if (MainThread.jobsInQueue) return;
         }
 
+        workTransferCalc(sRemote, sLocal, MainThread.transferFlag);
 
 
 

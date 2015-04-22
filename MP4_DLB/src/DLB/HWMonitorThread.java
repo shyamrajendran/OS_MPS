@@ -55,7 +55,7 @@ public class HWMonitorThread extends Thread {
     }
 
     protected StateInfo getCurrentState() throws SigarException, InterruptedException {
-        return new StateInfo(MainThread.jobQueue.size(), getCpuUsage(), getNwUsage());
+        return new StateInfo(MainThread.jobQueue.size(), getCpuUsage(), getNwUsage(), WorkerThread.timePerJob, MainThread.throttlingValue);
     }
 
     private void doMonitoring() throws IOException, InterruptedException, SigarException {

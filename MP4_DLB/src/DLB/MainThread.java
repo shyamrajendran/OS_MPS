@@ -180,9 +180,10 @@ public class MainThread {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, SigarException {
-        isLocal = true;
+        isLocal = !true;
         MainThread.GUARD = 0.5;
-        MainThread.transferFlag = 0;// 0 default only queue length
+        MainThread.transferFlag = 1;// 0 default only queue length
+
         if (args.length >= 1 && args[0].equals("remote"))
             isLocal = false;
         if (args.length >= 2)
