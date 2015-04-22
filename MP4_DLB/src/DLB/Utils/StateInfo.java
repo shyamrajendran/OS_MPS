@@ -13,6 +13,9 @@ public class StateInfo implements Serializable {
     private int queueLength;
     private double cpuUsage;
     private double bwUsage;
+    private double timePerJob;
+    private double throttlingValue;
+
 
     public StateInfo(int queue_length, double ...usages) {
         this.timestamp = new Date();
@@ -34,6 +37,9 @@ public class StateInfo implements Serializable {
                 ", cpuUsage=" + cpuUsage +
                 ", bwUsage=" + bwUsage +
                 ", timestamp=" + timestamp +
+                ", timePerJob" + timePerJob +
+                ", throttlingValue" + throttlingValue +
+
                 '}';
     }
 
@@ -49,6 +55,12 @@ public class StateInfo implements Serializable {
         return queueLength;
     }
 
+    public double getTimePerJob() {
+        return timePerJob;
+    }
+    public double getThrottlingValue() {
+        return throttlingValue;
+    }
     public void setQueueLength(int queueLength) {
         this.queueLength = queueLength;
     }

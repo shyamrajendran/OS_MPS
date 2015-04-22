@@ -23,7 +23,7 @@ public class WorkerThread extends Thread {
     private ScheduledExecutorService scheduler;
     private ScheduledFuture<?> workHandle, sleepHandle;
     private Job currentJob;
-    private volatile static double timePerJob;
+    protected static double timePerJob = 0.0 ;
 
     public WorkerThread(int index, double tValue) {
         this.index = index;

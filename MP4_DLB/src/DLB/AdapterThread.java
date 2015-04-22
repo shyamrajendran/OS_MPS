@@ -40,6 +40,7 @@ public class AdapterThread extends Thread {
     }
 
     private void workTransferCalc(StateInfo sRemote, StateInfo sLocal, int transferFlag) {
+
         switch (MainThread.transferFlag) {
             case 0:
                 if ((sLocal.getQueueLength() - sRemote.getQueueLength()) > MainThread.queueDifferenceThreshold) {
@@ -53,7 +54,9 @@ public class AdapterThread extends Thread {
             case 1:
 //                x * bytesperjob / bw = (jobqlength - x) * timetocomplteonejob * throttlefactor
 //                lhs  =  rhs - gaurd
-
+//                WorkerThread.timePerJob * MainThread.throttlingValue;
+                double remoteMetrics = sRemote.getTimePerJob() * sRemote.getQueueLength() * sRemote.getThrottlingValue();
+                double localMetrics = sLocal.getTimePerJob() * sLocal.getQueueLength() * sLocal.getThrottlingValue();
                 break;
         }
 
