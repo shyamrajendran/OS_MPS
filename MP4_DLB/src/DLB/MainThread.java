@@ -4,6 +4,7 @@ import DLB.Utils.Job;
 import DLB.Utils.Message;
 import DLB.Utils.MessageType;
 import org.hyperic.sigar.SigarException;
+import sun.applet.Main;
 
 import java.io.IOException;
 import java.net.*;
@@ -45,6 +46,7 @@ public class MainThread {
     protected static ServerSocket serverSocket;
     protected static Socket otherSocket;
     protected volatile static Socket mySocket;
+    protected volatile static int transferFlag;
 
 
     protected static int machineId = 0;
@@ -178,6 +180,7 @@ public class MainThread {
 
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, SigarException {
         isLocal = !true;
+        MainThread.transferFlag = 0;// 0 default only queue length
         if (args.length >= 1 && args[0].equals("remote"))
             isLocal = false;
         if (args.length >= 2)
@@ -186,7 +189,8 @@ public class MainThread {
             ip = args[2];
         if (args.length >= 4)
             port = Integer.parseInt(args[3]);
-
+        if (args.length >= 5)
+            MainThread.transferFlag = Integer.parseInt(args[4]);
 
         MainThread mainThread = new MainThread();
         mainThread.connect(ip, port);
