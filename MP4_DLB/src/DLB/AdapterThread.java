@@ -39,13 +39,23 @@ public class AdapterThread extends Thread {
         }
     }
 
-    private void workTransferCalc(StateInfo sRemote, StateInfo sLocal) {
-        if ((sLocal.getQueueLength() - sRemote.getQueueLength()) > MainThread.queueDifferenceThreshold) {
-            int jobsToSend = (sLocal.getQueueLength() - sRemote.getQueueLength()) / 2;
-            Message msg = new Message(MainThread.machineId, MessageType.JOBTRANSFER, jobsToSend);
-            System.out.println("Matching expected time to finish by sending " + jobsToSend + " number of jobs");
-            MainThread.transferManagerThread.addMessage(msg);
+    private void workTransferCalc(StateInfo sRemote, StateInfo sLocal, int transferFlag) {
+        switch (MainThread.transferFlag) {
+            case 0:
+                if ((sLocal.getQueueLength() - sRemote.getQueueLength()) > MainThread.queueDifferenceThreshold) {
+                    int jobsToSend = (sLocal.getQueueLength() - sRemote.getQueueLength()) / 2;
+                    Message msg = new Message(MainThread.machineId, MessageType.JOBTRANSFER, jobsToSend);
+                    System.out.println("Matching expected time to finish by sending " + jobsToSend + " number of jobs");
+                    MainThread.transferManagerThread.addMessage(msg);
+                }
+            break;
+
+            case 1:
+                break;
         }
+
+
+
     }
 
     private void adapterWork() throws InterruptedException, SigarException {
@@ -66,14 +76,6 @@ public class AdapterThread extends Thread {
             if (MainThread.jobsInQueue) return;
         }
 
-        switch (MainThread.transferFlag){
-            case 0:
-                workTransferCalc(sRemote, sLocal);
-                break;
-            case 1:
-                // add other cases
-                break;
-        }
 
 
 
