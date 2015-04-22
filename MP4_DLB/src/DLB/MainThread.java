@@ -198,7 +198,7 @@ public class MainThread {
         MainThread.timePerJob = ((double)(timeTotal)/10);
     }
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, SigarException {
-        isLocal = !true;
+        isLocal = true;
         MainThread.GUARD = 0.5;
         MainThread.transferFlag = 1;// 0 default only queue length
 

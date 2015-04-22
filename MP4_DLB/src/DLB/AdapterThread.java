@@ -52,6 +52,7 @@ public class AdapterThread extends Thread {
             break;
 
             case 1: // case when time to completion is considered.
+                System.out.println("CASE CASE CASE CASE 1");
 //                x * bytesperjob / bw = (jobqlength - x) * timetocomplteonejob * throttlefactor
 //                lhs  =  rhs - gaurd
 //                WorkerThread.timePerJob * MainThread.throttlingValue;
