@@ -55,6 +55,7 @@ public class HWMonitorThread extends Thread {
     }
 
     private double getTimePerJob() {
+        System.out.println("********************** TIME PER JOB ***************************" + MainThread.timePerJob);
         return MainThread.timePerJob;
     }
 
