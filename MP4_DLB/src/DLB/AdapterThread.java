@@ -4,6 +4,7 @@ import DLB.Utils.Job;
 import DLB.Utils.Message;
 import DLB.Utils.MessageType;
 import DLB.Utils.StateInfo;
+import org.hyperic.sigar.SigarException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,7 +39,7 @@ public class AdapterThread extends Thread {
         }
     }
 
-    private void adapterWork() throws InterruptedException {
+    private void adapterWork() throws InterruptedException, SigarException {
         Message incomingMsg = messages.take();
         // sleep switch worker
         // queue check - call function accordingly
@@ -162,6 +163,8 @@ public class AdapterThread extends Thread {
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
                 MainThread.stop();
+            } catch (SigarException e) {
+                e.printStackTrace();
             }
         }
     }

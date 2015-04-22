@@ -38,22 +38,24 @@ public class HWMonitorThread extends Thread {
         return cpu_usage;
     }
 
-    private double getNwUsage() {
-        try {
-            net = sigar.getNetStat();
-        } catch (SigarException e) {
-            e.printStackTrace();
-            return nw_usage;
-        }
-        nw_usage = net.getAllInboundTotal() + net.getAllOutboundTotal();
-        return nw_usage;
+    private double getNwUsage() throws InterruptedException, SigarException {
+        System.out.println("INDISIDE NETWORK ");
+        return NetworkData.startMetricTest();
+//        try {
+//            net = sigar.getNetStat();
+//        } catch (SigarException e) {
+//            e.printStackTrace();
+//            return nw_usage;
+//        }
+//        nw_usage = net.getAllInboundTotal() + net.getAllOutboundTotal();
+//        return nw_usage;
     }
 
-    protected StateInfo getCurrentState() {
+    protected StateInfo getCurrentState() throws SigarException, InterruptedException {
         return new StateInfo(MainThread.jobQueue.size(), getCpuUsage(), getNwUsage());
     }
 
-    private void doMonitoring() throws IOException {
+    private void doMonitoring() throws IOException, InterruptedException, SigarException {
         //if (MainThread.jobsInQueue || MainThread.jobsInComing) return;
         //int queue_length = MainThread.jobQueue.size();
         StateInfo state = getCurrentState();//new StateInfo(queue_length, getCpuUsage(), getNwUsage());
@@ -74,6 +76,8 @@ public class HWMonitorThread extends Thread {
                 ie.printStackTrace();
                 System.out.println("Cannot continue w/o connection");
                 MainThread.stop();
+            } catch (SigarException e) {
+                e.printStackTrace();
             }
         }
     }
