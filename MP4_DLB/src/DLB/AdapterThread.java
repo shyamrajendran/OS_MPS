@@ -31,10 +31,13 @@ public class AdapterThread extends Thread {
         throttlingValue = MainThread.throttlingValue;
         prev_sLocal = null;
         prev_sRemote = null;
+        workerThreads = null;
     }
 
     public void setThrottlingValue(double tValue) {
+        System.out.println("Changing throttle value to " + tValue);
         throttlingValue = tValue;
+        if (workerThreads == null || workerThreads.length == 0) return;
         for (int i = 0; i < workerThreads.length; i++) {
             workerThreads[i].changeThrottleValue(throttlingValue);
         }
@@ -91,16 +94,24 @@ public class AdapterThread extends Thread {
         StateInfo sRemote = (StateInfo) incomingMsg.getData();
         StateInfo sLocal = MainThread.hwMonitorThread.getCurrentState();
 
+        if (MainThread.isLocal) {
+            MainThread.dynamicBalancerUI.addMessage(new Message(incomingMsg.getMachineId(), MessageType.SM, sRemote));
+            MainThread.dynamicBalancerUI.addMessage(new Message(MainThread.machineId, MessageType.SM, sLocal));
+        }
+
         System.out.println("Adapter State Remote " + sRemote);
         System.out.println("Adapter State Local " + sLocal);
 
         synchronized (MainThread.jobInQueueLock) {
             if (MainThread.jobsInQueue) return;
         }
+
+        synchronized (MainThread.jobInComingLock) {
+            if (MainThread.jobsInComing) return;
+        }
+
         System.out.println("TEST");
         workTransferCalc(sRemote, sLocal, MainThread.transferFlag);
-
-
 
 //
 //        if (lastStateTime != null && lastStateTime.compareTo(sLocal.getTimestamp()) < 1) return;
@@ -171,6 +182,13 @@ public class AdapterThread extends Thread {
 
     @Override
     public void run() {
+        Message msg = new Message(MainThread.machineId, MessageType.UITVALUE, throttlingValue);
+        if (MainThread.isLocal) {
+            MainThread.dynamicBalancerUI.addMessage(msg);
+        } else {
+            MainThread.transferManagerThread.addMessage(msg);
+        }
+
         if (MainThread.isLocal)
             bootstrapJobs();
         if (MainThread.isLocal) {
@@ -192,6 +210,8 @@ public class AdapterThread extends Thread {
                 }
             }
         }
+
+        System.out.println("Now jobs are shared. Starting Processing");
 
         startWorkersAndMonitors();
 

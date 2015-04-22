@@ -5,9 +5,9 @@ import DLB.Utils.Message;
 import DLB.Utils.MessageType;
 import DLB.Utils.SystemStat;
 import org.hyperic.sigar.SigarException;
-import sun.applet.Main;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.*;
 import java.util.Arrays;
 import java.util.concurrent.BlockingDeque;
@@ -24,21 +24,22 @@ public class MainThread {
     protected static AdapterThread adapterThread;
     protected static HWMonitorThread hwMonitorThread;
     protected static CommunicationThread communicationThread;
-    protected static UIThread uithread;
+    protected static DynamicBalancerUI dynamicBalancerUI;
+
     protected volatile static boolean STOP_SIGNAL;
     protected volatile static double GUARD;
 
     protected static int numJobs = 1024;
     protected static int numWorkerThreads = 1;
 
-    protected static int utilizationFactor = 5000;
+    protected static int utilizationFactor = 100;
     protected static int numElementsPrint = 10;
-    protected static int collectionRate = 500; // in ms
+    protected static int collectionRate = 2; // in ms
 
     protected static int queueDifferenceThreshold = 20;
-    protected static int cpuThresholdLimit = 50;
+    protected static int cpuThresholdLimit = 10;
 
-    protected static int numElements = 1024 * 1024 * 2;//1024 * 1024 * 32;
+    protected static int numElements = 1024 * 1024 * 16;//1024 * 1024 * 32;
     protected static double initVal = 1.111111, addVal = 1.111111;
     protected static double[] vectorA;
     protected static double[] vectorB;
@@ -63,29 +64,28 @@ public class MainThread {
 
     private static int elementsDone;
 
-    protected volatile static double throttlingValue = 0.9;
-
-
-
-
-    protected static boolean isLocal = true;
-
-
-
-
-    protected static String ip = "localhost";//"172.17.116.149";//"jalatif2.ddns.net"; //"localhost";
+    protected static double throttlingValue = 0.01;
+    protected static boolean isLocal = !true;
+    protected static String ip = "172.17.116.149";//"jalatif2.ddns.net"; //"localhost";
     protected static int port = 2211;
 
-    public MainThread() throws IOException, SigarException, InterruptedException {
+    public MainThread() throws IOException, SigarException, IllegalAccessException,
+                                                            NoSuchFieldException, InterruptedException {
+//        System.out.println(getClass().getClassLoader().getResource(".").getPath());
+//        String path = getClass().getClassLoader().getResource("DLB/res/lib").getPath();
+//        System.out.println(path);
+//        System.setProperty("java.library.path", path);
+//        Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
+//        fieldSysPath.setAccessible( true );
+//        fieldSysPath.set(null, null);
+
         transferManagerThread = new TransferManagerThread();
         stateManagerThread = new StateManagerThread();
         hwMonitorThread = new HWMonitorThread();
         adapterThread = new AdapterThread();
         communicationThread = new CommunicationThread();
-        if (isLocal) {
-            // ui thread should run only on local node
-            uithread = new UIThread();
-        }
+        if (isLocal)
+            dynamicBalancerUI = new DynamicBalancerUI();
     }
 
     public void start() throws InterruptedException {
@@ -104,9 +104,8 @@ public class MainThread {
         adapterThread.start();
         transferManagerThread.start();
         stateManagerThread.start();
-        if (isLocal) {
-            uithread.start();
-        }
+        if (isLocal)
+            dynamicBalancerUI.start();
     }
 
     protected static synchronized void addToResult(Job job) {
@@ -115,6 +114,12 @@ public class MainThread {
             vectorB[i] = data[i - job.getStartIndex()];
         }
         elementsDone += data.length;
+        if (isLocal) {
+            double progress = elementsDone * 10000.0;
+            progress = progress / (1.0 * numElements);
+            //dynamicBalancerUI.setProgress((int) progress);
+            dynamicBalancerUI.addMessage(new Message(MainThread.machineId, MessageType.Progress, progress));
+        }
         if (elementsDone == numElements) {
             System.out.println("Finished Computing everything");
             for (int i = 0; i < Math.min(numElements, numElementsPrint); i++)
@@ -181,10 +186,10 @@ public class MainThread {
 
     }
 
-    public void timePerJobCalc(){
+    public void timePerJobCalc() {
         int elementsPerJob = MainThread.numElements / MainThread.numJobs;
         long timeTotal= 0 ;
-        for(int i = 0 ;i < 10 ;i++ ){ // calculating 10 times average
+        for (int i = 0; i < 10; i++) { // calculating 10 times average
             long t1 = System.currentTimeMillis();
             double[] data = new double[elementsPerJob];
             Arrays.fill(data, MainThread.initVal);
@@ -192,39 +197,44 @@ public class MainThread {
                 data[j] = data[j] + MainThread.addVal;
             }
             long t2 = System.currentTimeMillis();
-            timeTotal+=(t2-t1);
+            timeTotal += (t2 - t1);
         }
         System.out.println("TOTAL TIME FOR 10 JOBS in ms : " + timeTotal);
         MainThread.timePerJob = ((double)(timeTotal)/10);
     }
-    public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, SigarException {
-        isLocal = true;
+
+
+
+    public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException,
+                                                    SigarException, NoSuchFieldException, IllegalAccessException {
         MainThread.GUARD = 0.5;
-        if ( isLocal ){
-            MainThread.throttlingValue = 0.00001;
-        } else {
-            MainThread.throttlingValue = 0.9;
-        }
         MainThread.transferFlag = 0;// 0 default only queue length
+
         if (args.length >= 1 && args[0].equals("remote"))
             isLocal = false;
         if (args.length >= 2)
             throttlingValue = Double.parseDouble(args[1]);
         if (args.length >= 3)
-            ip = args[2];
+            collectionRate = Integer.parseInt(args[2]);
         if (args.length >= 4)
-            port = Integer.parseInt(args[3]);
+            ip = args[3];
         if (args.length >= 5)
-            MainThread.GUARD = Integer.parseInt(args[4]);
+            port = Integer.parseInt(args[4]);
         if (args.length >= 6)
+            MainThread.GUARD = Integer.parseInt(args[5]);
+        if (args.length >= 7)
             MainThread.transferFlag = Integer.parseInt(args[6]);
 
+
         MainThread mainThread = new MainThread();
+
         mainThread.timePerJobCalc();
         System.out.println("TIME PER JOB ON MACHINE ID #"+ MainThread.machineId + " IS (in ms) :" + MainThread.timePerJob);
+        
         mainThread.connect(ip, port);
 
         communicationThread.sendMessage("Got connection from " + port);
+
         mainThread.start();
     }
 }

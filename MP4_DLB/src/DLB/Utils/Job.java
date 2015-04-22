@@ -15,7 +15,6 @@ public class Job implements Serializable {
     //private List data;
     private Double[] data;
 
-
     public Job(int startIndex, int endIndex, Double[] data) {
         this.startIndex = startIndex;
         this.endIndex = endIndex;

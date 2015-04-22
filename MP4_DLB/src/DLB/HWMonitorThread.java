@@ -2,11 +2,11 @@ package DLB;
 
 import DLB.Utils.Message;
 import DLB.Utils.MessageType;
+import DLB.Utils.NetworkData;
 import DLB.Utils.StateInfo;
 import org.hyperic.sigar.*;
 
 import java.io.IOException;
-import java.security.PrivateKey;
 
 /**
  * Created by manshu on 4/16/15.
@@ -62,13 +62,20 @@ public class HWMonitorThread extends Thread {
     private double getThrottlingValue() {
         return MainThread.throttlingValue;
     }
+
     protected StateInfo getCurrentState() throws SigarException, InterruptedException {
 //        return new StateInfo(MainThread.jobQueue.size(), getCpuUsage(), getNwUsage(), getTimePerJob(), getThrottlingValue() );
         return new StateInfo(MainThread.jobQueue.size(), getCpuUsage(), 0.0, getTimePerJob(), getThrottlingValue() );
     }
 
-    private void doMonitoring() throws IOException, InterruptedException, SigarException {
-        //if (MainThread.jobsInQueue || MainThread.jobsInComing) return;
+    private void doMonitoring() throws IOException, SigarException, InterruptedException {
+        synchronized (MainThread.jobInQueueLock) {
+            if (MainThread.jobsInQueue) return;
+        }
+
+        synchronized (MainThread.jobInComingLock) {
+            if (MainThread.jobsInComing) return;
+        }
         //int queue_length = MainThread.jobQueue.size();
         StateInfo state = getCurrentState();//new StateInfo(queue_length, getCpuUsage(), getNwUsage());
         Message msg = new Message(MainThread.machineId, MessageType.HW, state);

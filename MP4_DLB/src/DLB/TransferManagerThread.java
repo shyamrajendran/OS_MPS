@@ -110,8 +110,17 @@ public class TransferManagerThread extends Thread {
                 }
                 sendRequiredJob(incomingMsg);
                 break;
+            case JOBTRANSFERACK:
+                MainThread.communicationThread.sendMessage(incomingMsg);
+                break;
             case JOBRESULT:
                 sendResults(incomingMsg);
+                break;
+            case TVALUE:
+                MainThread.communicationThread.sendMessage(incomingMsg);
+                break;
+            case UITVALUE:
+                MainThread.communicationThread.sendMessage(incomingMsg);
                 break;
             default:
                 MainThread.communicationThread.sendMessage(incomingMsg);
@@ -127,8 +136,8 @@ public class TransferManagerThread extends Thread {
             MainThread.jobQueue.addFirst(job);
 
             // print jobs info ================================================
-            System.out.println("Job Data ----->");
-            System.out.println(job.getStartIndex() + " " + job.getEndIndex());
+            //System.out.println("Job Data ----->");
+            //System.out.println(job.getStartIndex() + " " + job.getEndIndex());
 //            Double[] data = job.getData();
 //            for (Double element : data) {
 //                System.out.print(element + " ");
@@ -147,8 +156,8 @@ public class TransferManagerThread extends Thread {
 
     public static synchronized void addJob(Job job) {
         MainThread.jobQueue.addFirst(job);
-        System.out.println("Job Data ----->");
-        System.out.println(job.getStartIndex() + " " + job.getEndIndex());
+        //System.out.println("Job Data ----->");
+        //System.out.println(job.getStartIndex() + " " + job.getEndIndex());
     }
 
     @Override

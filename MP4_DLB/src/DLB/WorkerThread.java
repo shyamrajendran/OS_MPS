@@ -39,15 +39,15 @@ public class WorkerThread extends Thread {
     }
 
     private Job getResult(Job job) {
-        long t1 = System.currentTimeMillis();
+        //long t1 = System.currentTimeMillis();
         Double[] data = job.getData();
         for (int i = 0; i < data.length; i++) {
             data[i] = data[i] + MainThread.addVal;
         }
-        long t2 = System.currentTimeMillis();
-        if ( (long) timePerJob == 0 ){
-            WorkerThread.timePerJob = (double ) t2-t1;
-        }
+//        long t2 = System.currentTimeMillis();
+//        if ((long) timePerJob == 0){
+//            WorkerThread.timePerJob = (double) (t2 - t1);
+//        }
         return new Job(job.getStartIndex(), job.getEndIndex(), data);
     }
 
@@ -55,6 +55,14 @@ public class WorkerThread extends Thread {
         throttlingValue = tValue;
         workTime = (int) throttlingValue * MainThread.utilizationFactor;
         sleepTime = MainThread.utilizationFactor - workTime;
+        if (sleepHandle != null) {
+            if (!sleepHandle.isDone() || !sleepHandle.isCancelled())
+                sleepHandle.cancel(true);
+        }
+        if (workHandle != null) {
+            if (!workHandle.isDone() || !workHandle.isCancelled())
+                workHandle.cancel(true);
+        }
         setUpSleepTimer();
     }
 
@@ -116,7 +124,6 @@ public class WorkerThread extends Thread {
         synchronized (MainThread.jobInComingLock) {
             if (MainThread.jobsInComing) return;
         }
-
         Job job;
         if (currentJob != null)
             job = currentJob;
@@ -129,7 +136,7 @@ public class WorkerThread extends Thread {
 
         // if local call result function otherwise send result to the local node
         if (MainThread.isLocal) {
-//            System.out.println("Worker thread " + index + " calculated the result on local");
+            System.out.println("Worker thread " + index + " calculated the result on local");
             MainThread.addToResult(resultJob);
         } else {
             System.out.println("Worker thread " + index + " sending message");

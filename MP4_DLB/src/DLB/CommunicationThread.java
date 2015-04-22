@@ -3,9 +3,12 @@ package DLB;
 import DLB.Utils.Job;
 import DLB.Utils.Message;
 import DLB.Utils.MessageType;
+import DLB.Utils.StateInfo;
 
 import java.io.*;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Created by manshu on 4/16/15.
@@ -13,14 +16,20 @@ import java.util.List;
 public class CommunicationThread extends Thread {
     private ObjectOutputStream dout;
     private ObjectInputStream din;
-
+    private GZIPOutputStream gzout;
+    private GZIPInputStream gzin;
 
     public CommunicationThread() throws IOException {
         dout = null;
         din = null;
+        gzout = null;
+        gzin = null;
     }
 
     public void setUpStreams() throws IOException {
+//        gzout = new GZIPOutputStream(MainThread.mySocket.getOutputStream());
+//        gzin = new GZIPInputStream(MainThread.mySocket.getInputStream());
+
         dout = new ObjectOutputStream(MainThread.mySocket.getOutputStream());
         din  = new ObjectInputStream(MainThread.mySocket.getInputStream());
     }
@@ -42,12 +51,14 @@ public class CommunicationThread extends Thread {
             return null;
         }
         String inString = incomingMsg.toString();
-        System.out.println("Message = " + inString.substring(0, Math.min(inString.length(), 80)));
+        //System.out.println("Message = " + inString.substring(0, Math.min(inString.length(), 80)));
         //System.out.println(incomingMsg.getClass());
 
         if (incomingMsg instanceof Message) {
             try {
                 Message msg = (Message) incomingMsg;
+                if (msg.getMsgType() != MessageType.JOBTRANSFER)
+                    System.out.println("Message = " + inString.substring(0, Math.min(inString.length(), 80)));
                 switch (msg.getMsgType()) {
                     case BULKJOBTRANSFER:
                         List<Job> jobs = (List<Job>) msg.getData();
@@ -58,7 +69,7 @@ public class CommunicationThread extends Thread {
                         synchronized (MainThread.jobInComingLock) {
                             MainThread.jobsInComing = true;
                         }
-                        System.out.println("Number of jobs that are coming starting are " + (Integer) msg.getData());
+                        System.out.println("Number of jobs that are coming starting are " + (int) msg.getData());
                         System.out.println("Current jobs are " + MainThread.jobQueue.size());
                         break;
 
@@ -100,18 +111,28 @@ public class CommunicationThread extends Thread {
                         System.out.println("OkAck message sent");
                         MainThread.stop();
                         break;
+
                     case OkACK:
                         System.out.println("Got Ok ack");
                         MainThread.stop();
                         break;
                     case HW:
                         System.out.println("Got HW State");
-                        MainThread.adapterThread.addMessage(msg);
-                        // if local node then forward the message to ui thread also
                         if (MainThread.isLocal) {
-                            MainThread.uithread.addMessage(msg);
+                            MainThread.dynamicBalancerUI.addMessage(new Message(msg.getMachineId(), MessageType.SM,
+                                    msg.getData()));
                         }
+                        MainThread.adapterThread.addMessage(msg);
                         break;
+
+                    case TVALUE:
+                        MainThread.adapterThread.setThrottlingValue((double) msg.getData());
+                        break;
+
+                    case UITVALUE:
+                        MainThread.dynamicBalancerUI.addMessage(msg);
+                        break;
+
                     default:
                         System.out.println("Unknown message");
                 }

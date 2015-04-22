@@ -14,4 +14,7 @@ public enum MessageType {
     SM,
     FinishACK,
     OkACK,
+    TVALUE,
+    Progress,
+    UITVALUE
 }
