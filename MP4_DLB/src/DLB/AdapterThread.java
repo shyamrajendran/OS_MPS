@@ -62,18 +62,17 @@ public class AdapterThread extends Thread {
                 int jobsToSend =0 ;
 
                 if (localMetrics > remoteMetrics + MainThread.GUARD) {
-                    while ((localMetrics - remoteMetrics) >= MainThread.GUARD){
+                    while ((localMetrics - remoteMetrics) >= MainThread.GUARD) {
                         localQ--;
                         localMetrics = sLocal.getTimePerJob() * localQ * sLocal.getThrottlingValue();
                         jobsToSend++;
                     }
-                Message msg = new Message(MainThread.machineId, MessageType.JOBTRANSFER, jobsToSend);
-                System.out.println("Matching expected time to finish by sending " + jobsToSend + " number of jobs");
-                MainThread.transferManagerThread.addMessage(msg);
+                    Message msg = new Message(MainThread.machineId, MessageType.JOBTRANSFER, jobsToSend);
+                    System.out.println("Matching expected time to finish by sending " + jobsToSend + " number of jobs");
+                    MainThread.transferManagerThread.addMessage(msg);
+                }
                 break;
         }
-
-
 
     }
 
