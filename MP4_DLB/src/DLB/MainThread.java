@@ -200,8 +200,12 @@ public class MainThread {
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, SigarException {
         isLocal = true;
         MainThread.GUARD = 0.5;
+        if ( isLocal ){
+            MainThread.throttlingValue = 0.00001;
+        } else {
+            MainThread.throttlingValue = 0.9;
+        }
         MainThread.transferFlag = 0;// 0 default only queue length
-
         if (args.length >= 1 && args[0].equals("remote"))
             isLocal = false;
         if (args.length >= 2)

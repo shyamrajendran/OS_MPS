@@ -6,6 +6,7 @@ import DLB.Utils.MessageType;
 import DLB.Utils.StateInfo;
 import org.hyperic.sigar.SigarException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -40,7 +41,9 @@ public class AdapterThread extends Thread {
     }
 
     private void workTransferCalc(StateInfo sRemote, StateInfo sLocal, int transferFlag) {
-        System.out.println("TRASFER FLAG : + " + transferFlag);
+        System.out.println("TRASFER FLAG :" + transferFlag);
+        System.out.println("SLOCAL IS :" + sLocal);
+        System.out.println("SREMOTE IS :" + sRemote);
         switch (transferFlag) {
             case 0: // case when only queue length is considered.
                 if ((sLocal.getQueueLength() - sRemote.getQueueLength()) > MainThread.queueDifferenceThreshold) {
@@ -61,8 +64,7 @@ public class AdapterThread extends Thread {
                 int remoteQ = sRemote.getQueueLength();
                 int localQ = sLocal.getQueueLength();
                 int jobsToSend = 0 ;
-                System.out.println("SLOCAL IS " + sLocal);
-                System.out.println("SREMOTE IS " + sRemote);
+
                 if (localMetrics > remoteMetrics + MainThread.GUARD) {
                     while ((localMetrics - remoteMetrics) >= MainThread.GUARD) {
                         localQ--;
@@ -78,7 +80,7 @@ public class AdapterThread extends Thread {
 
     }
 
-    private void adapterWork() throws InterruptedException, SigarException {
+    private void adapterWork() throws InterruptedException, SigarException, IOException {
         Message incomingMsg = messages.take();
         // sleep switch worker
         // queue check - call function accordingly
@@ -95,7 +97,7 @@ public class AdapterThread extends Thread {
         synchronized (MainThread.jobInQueueLock) {
             if (MainThread.jobsInQueue) return;
         }
-
+        System.out.println("TEST");
         workTransferCalc(sRemote, sLocal, MainThread.transferFlag);
 
 
@@ -200,6 +202,8 @@ public class AdapterThread extends Thread {
                 ie.printStackTrace();
                 MainThread.stop();
             } catch (SigarException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

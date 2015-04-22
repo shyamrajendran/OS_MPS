@@ -110,6 +110,13 @@ public class WorkerThread extends Thread {
 
 
     private void doWork() throws InterruptedException {
+        synchronized (MainThread.jobInQueueLock) {
+            if (MainThread.jobsInQueue) return;
+        }
+        synchronized (MainThread.jobInComingLock) {
+            if (MainThread.jobsInComing) return;
+        }
+
         Job job;
         if (currentJob != null)
             job = currentJob;
@@ -122,7 +129,7 @@ public class WorkerThread extends Thread {
 
         // if local call result function otherwise send result to the local node
         if (MainThread.isLocal) {
-            System.out.println("Worker thread " + index + " calculated the result on local");
+//            System.out.println("Worker thread " + index + " calculated the result on local");
             MainThread.addToResult(resultJob);
         } else {
             System.out.println("Worker thread " + index + " sending message");

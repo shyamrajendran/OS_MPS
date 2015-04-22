@@ -39,8 +39,8 @@ public class StateInfo implements Serializable {
                 ", cpuUsage=" + cpuUsage +
                 ", bwUsage=" + bwUsage +
                 ", timestamp=" + timestamp +
-                ", timePerJob" + timePerJob +
-                ", throttlingValue" + throttlingValue +
+                ", timePerJob=" + timePerJob +
+                ", throttlingValue=" + throttlingValue +
 
                 '}';
     }
