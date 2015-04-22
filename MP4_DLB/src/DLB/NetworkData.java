@@ -49,13 +49,14 @@ public class NetworkData {
 
     public static double startMetricTest() throws SigarException, InterruptedException {
         double t = 0;
-        
+        double t1 = System.currentTimeMillis();
         for(int i=0; i<2;i++) {
             Long[] m = getMetric();
             double totalrx = m[0];
             double totaltx = m[1];
             if (i == 1 ){
-                return t;
+                double t2 = System.currentTimeMillis();
+                return t/(t2-t1);
             } else {
                 t+=totalrx+totaltx;
             }
