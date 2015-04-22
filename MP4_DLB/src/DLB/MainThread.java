@@ -35,7 +35,7 @@ public class MainThread {
     protected static int queueDifferenceThreshold = 20;
     protected static int cpuThresholdLimit = 50;
 
-    protected static int numElements = 1024 * 1024 * 32;//1024 * 1024 * 32;
+    protected static int numElements = 1024 * 1024 * 2;//1024 * 1024 * 32;
     protected static double initVal = 1.111111, addVal = 1.111111;
     protected static double[] vectorA;
     protected static double[] vectorB;
@@ -59,11 +59,19 @@ public class MainThread {
     private static int elementsDone;
 
     protected static double throttlingValue = 0.9;
-    protected static boolean isLocal = !true;
+
+
+
+
+    protected static boolean isLocal = true;
+
+
+
+
     protected static String ip = "localhost";//"172.17.116.149";//"jalatif2.ddns.net"; //"localhost";
     protected static int port = 2211;
 
-    public MainThread() throws IOException, SigarException {
+    public MainThread() throws IOException, SigarException, InterruptedException {
         transferManagerThread = new TransferManagerThread();
         stateManagerThread = new StateManagerThread();
         hwMonitorThread = new HWMonitorThread();
@@ -169,6 +177,7 @@ public class MainThread {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, SigarException {
+        isLocal = !true;
         if (args.length >= 1 && args[0].equals("remote"))
             isLocal = false;
         if (args.length >= 2)
@@ -183,8 +192,6 @@ public class MainThread {
         mainThread.connect(ip, port);
 
         communicationThread.sendMessage("Got connection from " + port);
-
         mainThread.start();
-
     }
 }

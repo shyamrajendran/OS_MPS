@@ -6,6 +6,7 @@ import DLB.Utils.StateInfo;
 import org.hyperic.sigar.*;
 
 import java.io.IOException;
+import java.security.PrivateKey;
 
 /**
  * Created by manshu on 4/16/15.
@@ -17,12 +18,14 @@ public class HWMonitorThread extends Thread {
     private NetStat net;
     private CpuPerc cpuPerc;
     private double cpu_usage = 0.0, nw_usage = 0.0;
+    private NetworkData nwData;
 
-    public HWMonitorThread() throws SigarException {
+    public HWMonitorThread() throws SigarException, InterruptedException {
         sigar = new Sigar();
         cpu = null;
         pid = sigar.getPid(); // this one gives me the same process ID that I see in visualVM
         cpuPerc = sigar.getCpuPerc();
+        nwData = new NetworkData(sigar);
         System.out.println("PID of the process is " + pid);
     }
 
@@ -39,7 +42,7 @@ public class HWMonitorThread extends Thread {
     }
 
     private double getNwUsage() throws InterruptedException, SigarException {
-        System.out.println("INDISIDE NETWORK ");
+        System.out.println("INSIDE NETWORK ");
         return NetworkData.startMetricTest();
 //        try {
 //            net = sigar.getNetStat();
