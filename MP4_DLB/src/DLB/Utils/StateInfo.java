@@ -20,8 +20,8 @@ public class StateInfo implements Serializable {
     public StateInfo(int queue_length, double ...usages) {
         this.timestamp = new Date();
         this.queueLength = queue_length;
-        this.timePerJob = usages[3];
-        this.throttlingValue = usages[4];
+        this.timePerJob = usages[2];
+        this.throttlingValue = usages[3];
         if (usages.length >= 1)
             cpuUsage = usages[0];
         else

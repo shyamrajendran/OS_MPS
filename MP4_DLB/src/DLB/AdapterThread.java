@@ -40,8 +40,8 @@ public class AdapterThread extends Thread {
     }
 
     private void workTransferCalc(StateInfo sRemote, StateInfo sLocal, int transferFlag) {
-
-        switch (MainThread.transferFlag) {
+        System.out.println("TRASFER FLAG : + " + transferFlag);
+        switch (transferFlag) {
             case 0: // case when only queue length is considered.
                 if ((sLocal.getQueueLength() - sRemote.getQueueLength()) > MainThread.queueDifferenceThreshold) {
                     int jobsToSend = (sLocal.getQueueLength() - sRemote.getQueueLength()) / 2;
