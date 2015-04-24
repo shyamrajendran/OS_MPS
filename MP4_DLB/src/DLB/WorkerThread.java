@@ -24,7 +24,7 @@ public class WorkerThread extends Thread {
     private ScheduledFuture<?> workHandle, sleepHandle;
     private Job currentJob;
     protected static double timePerJob ;
-    private int numIterations = 2000;
+    protected static int numIterations = 2000;
 
     public WorkerThread(int index, double tValue) {
         this.index = index;

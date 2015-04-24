@@ -4,8 +4,13 @@ import DLB.Utils.Job;
 import DLB.Utils.Message;
 import DLB.Utils.MessageType;
 import DLB.Utils.SystemStat;
+import com.sun.xml.internal.ws.api.pipe.FiberContextSwitchInterceptor;
 import org.hyperic.sigar.SigarException;
+import sun.applet.Main;
 
+import javax.xml.bind.SchemaOutputResolver;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.*;
@@ -39,7 +44,7 @@ public class MainThread {
     protected static int queueDifferenceThreshold = 20;
     protected static int cpuThresholdLimit = 10;
 
-    protected static int numElements = 1024 * 1024 * 4;//1024 * 1024 * 32;
+    protected static int numElements = 1024 * 1024 * 2;//1024 * 1024 * 32;
 
     protected static double initVal = 1.111111, addVal = 1.111111;
     protected static double[] vectorA;
@@ -73,7 +78,7 @@ public class MainThread {
     protected static int finalRemoteJobs;
 
     protected static double throttlingValue = 0.5;
-    protected static boolean isLocal = !true;
+    protected static boolean isLocal = true;
     protected static String ip = "localhost";//"172.17.116.149";//"jalatif2.ddns.net"; //"localhost";
     protected static int[] port = {2211, 2212, 2213};
     protected static enum TRANSFER_TYPE {
@@ -259,26 +264,94 @@ public class MainThread {
 
 
 
+    private void readConf(String confFile) throws IOException {
+        BufferedReader  bufferedReader = new BufferedReader(new FileReader(confFile));
+        String in_line;
+        String[] temp ;
+        while((in_line = bufferedReader.readLine()) != null){
+            if (in_line.equals("")) continue;
+            if (in_line.contains("#")) continue;
+            String[] inputList = in_line.split(":");
+            String key = inputList[0];
+            String val = inputList[1];
+                switch (key){
+
+                    case "JOB_LOOP":
+                        WorkerThread.numIterations = Integer.parseInt(val);
+                        break;
+
+                    case "NUM_ELEMENTS":
+                        MainThread.numElements = 1024 * 1024 * Integer.parseInt(val);
+                        break;
+
+                    case "GUARD":
+                        MainThread.GUARD = Double.parseDouble(val);
+                        break;
+
+                    case "THROTTLING_VALUE":
+                        throttlingValue = Double.parseDouble(val);
+                        break;
+
+                    case "COLLECTION_RATE":
+                        collectionRate = Integer.parseInt(val);
+                        break;
+
+                    case "TRANSFER_FLAG":
+                        MainThread.transferFlag = Integer.parseInt(val);
+                        break;
+
+                    case "NODE_TYPE":
+                        if ( val.equals("remote")) {
+                            isLocal = false;
+                        }
+                        break;
+
+                    case "NODE_IP":
+                        ip = val;
+                        break;
+
+                }
+            }
+    }
+
+
+    private void printConf(){
+        System.out.println("**** RUN CONFIGURATION LOADED **** ");
+        System.out.println("JOB LOOP : "+ WorkerThread.numIterations);
+        System.out.println("NUM_ELEMENTS : "+ MainThread.numElements);
+        System.out.println("GUARD : "+ MainThread.GUARD);
+        System.out.println("THROTTLING VALUE : "+ throttlingValue);
+        System.out.println("COLLECTION_RATE : "+ collectionRate);
+        System.out.println("TRANSFER_FLAG : "+ MainThread.transferFlag);
+
+
+    }
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException,
                                                     SigarException, NoSuchFieldException, IllegalAccessException {
         MainThread.GUARD = 0.5;
         MainThread.transferFlag = 0;// 0 default only queue length
 
-        if (args.length >= 1 && args[0].equals("remote"))
-            isLocal = false;
-        if (args.length >= 2)
-            throttlingValue = Double.parseDouble(args[1]);
-        if (args.length >= 3)
-            collectionRate = Integer.parseInt(args[2]);
-        if (args.length >= 4)
-            ip = args[3];
-        if (args.length >= 5)
-            MainThread.GUARD = Integer.parseInt(args[4]);
-        if (args.length >= 6)
-            MainThread.transferFlag = Integer.parseInt(args[5]);
+//        if (args.length >= 1 && args[0].equals("remote"))
+//            isLocal = false;
+//        if (args.length >= 2)
+//            throttlingValue = Double.parseDouble(args[1]);
+//        if (args.length >= 3)
+//            collectionRate = Integer.parseInt(args[2]);
+//        if (args.length >= 4)
+//            ip = args[3];
+//        if (args.length >= 5)
+//            MainThread.GUARD = Integer.parseInt(args[4]);
+//        if (args.length >= 6)
+//            MainThread.transferFlag = Integer.parseInt(args[5]);
 
 
         MainThread mainThread = new MainThread();
+        try {
+            mainThread.readConf(args[0]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mainThread.printConf();
 
         mainThread.timePerJobCalc();
         System.out.println("TIME PER JOB ON MACHINE ID #" + MainThread.machineId + " IS (in ms) :" + MainThread.timePerJob);
@@ -288,5 +361,7 @@ public class MainThread {
         communicationThread[0].sendMessage("Got connection from " + port);
 
         mainThread.start();
+
     }
+
 }
