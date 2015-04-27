@@ -5,6 +5,7 @@ import DLB.Utils.MessageType;
 import DLB.Utils.NetworkData;
 import DLB.Utils.StateInfo;
 import org.hyperic.sigar.*;
+import sun.applet.Main;
 
 import java.io.IOException;
 
@@ -42,8 +43,8 @@ public class HWMonitorThread extends Thread {
     }
 
     private double getNwUsage() throws InterruptedException, SigarException {
-        System.out.println("INSIDE NETWORK");
-        return NetworkData.startMetricTest();
+//        System.out.println("INSIDE NETWORK");
+//        return MainThread.
 //        try {
 //            net = sigar.getNetStat();
 //        } catch (SigarException e) {
@@ -52,6 +53,7 @@ public class HWMonitorThread extends Thread {
 //        }
 //        nw_usage = net.getAllInboundTotal() + net.getAllOutboundTotal();
 //        return nw_usage;
+        return MainThread.bandwidth;
     }
 
     private double getTimePerJob() {
@@ -67,10 +69,10 @@ public class HWMonitorThread extends Thread {
 //        return new StateInfo(MainThread.jobQueue.size(), getCpuUsage(), getNwUsage(), getTimePerJob(), getThrottlingValue() );
         if (MainThread.isLocal)
             return new StateInfo(MainThread.jobQueue.size(), MainThread.localJobsDone, MainThread.jobsInQueue,
-                    MainThread.jobsInComing, MainThread.balanceTransferred, getCpuUsage(), 0.0, getTimePerJob(), getThrottlingValue() );
+                    MainThread.jobsInComing, MainThread.balanceTransferred, getCpuUsage(), getNwUsage(), getTimePerJob(), getThrottlingValue() );
         else
             return new StateInfo(MainThread.jobQueue.size(), MainThread.resultantJobQueue.size(),
-                    MainThread.jobsInQueue, MainThread.jobsInComing, MainThread.balanceTransferred, getCpuUsage(), 0.0, getTimePerJob(),
+                    MainThread.jobsInQueue, MainThread.jobsInComing, MainThread.balanceTransferred, getCpuUsage(), getNwUsage(), getTimePerJob(),
                     getThrottlingValue() );
     }
 

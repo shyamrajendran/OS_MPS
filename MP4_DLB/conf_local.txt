@@ -1,8 +1,8 @@
 #local, remote
-NODE_TYPE:local
+NODE_TYPE:remote
 
 #NODE_IP:172.22.156.73
-NODE_IP:172.17.125.5
+NODE_IP:172.17.91.10
 
 #num of elements 1024*1024*NUM_ELEMENTS
 NUM_ELEMENTS:2
