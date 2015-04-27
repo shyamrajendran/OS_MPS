@@ -23,7 +23,7 @@ THROTTLING_VALUE:0.7
 COLLECTION_RATE:5
 
 #0-queue length based transfer policy #1-bw based
-TRANSFER_FLAG:1
+TRANSFER_FLAG:0
 
 #transfer model type:SE,RE,SY
 #TRANSFER_MODEL:SE
