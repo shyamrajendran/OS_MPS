@@ -1,5 +1,5 @@
 #local, remote
-NODE_TYPE:remote
+NODE_TYPE:local
 
 #NODE_IP:172.22.156.73
 NODE_IP:172.17.125.5
