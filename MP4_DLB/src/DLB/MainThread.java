@@ -57,7 +57,7 @@ public class MainThread {
 
     protected volatile static int transferFlag;
     protected volatile static double timePerJob;
-
+    protected static double compressed = 0;
 
     protected static int machineId = 0;
 
@@ -378,7 +378,9 @@ public class MainThread {
                 case "QUEUE_DIFFERENCE":
                     MainThread.queueDifferenceThreshold = Integer.parseInt(val);
                     break;
-
+                case "COMPRESSED":
+                    MainThread.compressed = Integer.parseInt(val);
+                    break;
                 default:
                     break;
             }

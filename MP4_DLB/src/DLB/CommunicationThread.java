@@ -1,9 +1,6 @@
 package DLB;
 
-import DLB.Utils.Job;
-import DLB.Utils.Message;
-import DLB.Utils.MessageType;
-import DLB.Utils.StateInfo;
+import DLB.Utils.*;
 
 import java.io.*;
 import java.util.List;
@@ -19,6 +16,7 @@ public class CommunicationThread extends Thread {
     private GZIPOutputStream gzout;
     private GZIPInputStream gzin;
     private int socketNum = 0;
+    private CompressedBlockOutputStream compressedout;
 
     public CommunicationThread(int socketNum) throws IOException {
         dout = null;
@@ -35,32 +33,59 @@ public class CommunicationThread extends Thread {
         dout = new ObjectOutputStream(MainThread.mySocket[socketNum].getOutputStream());
         din  = new ObjectInputStream(MainThread.mySocket[socketNum].getInputStream());
 
+        if (MainThread.compressed == 1) {
+            compressedout = new CompressedBlockOutputStream(dout, 16384);
+        }
 //        din = new ObjectInputStream(gzin);
 //        dout = new ObjectOutputStream(gzout);
 
     }
 
+
     public synchronized void sendMessage(Object message) throws IOException {
         if (dout == null) return;
-        //dout.writeUTF(message);
-        //dout = new ObjectOutputStream(gzout);
-        dout.reset();
-//        gzout = new GZIPOutputStream(MainThread.mySocket[socketNum].getOutputStream());
-//        dout = new ObjectOutputStream(gzout);
-        dout.writeObject(message);
-        dout.flush();
-//        gzout.finish();
-//        dout.close();
+
+        if (MainThread.compressed == 1) {
+            ObjectOutputStream objWriter = new ObjectOutputStream(compressedout);
+            objWriter.writeObject(message);
+            objWriter.flush();
+        } else {
+            dout.reset();
+            dout.writeObject(message);
+            dout.flush();
+        }
     }
+
+
+    //orginal code
+//    public synchronized void sendMessage(Object message) throws IOException {
+//        if (dout == null) return;
+//        //dout.writeUTF(message);
+//        //dout = new ObjectOutputStream(gzout);
+//        dout.reset();
+////        gzout = new GZIPOutputStream(MainThread.mySocket[socketNum].getOutputStream());
+////        dout = new ObjectOutputStream(gzout);
+//        dout.writeObject(message);
+//        dout.flush();
+//
+////        //////////////////////////////////////////
+////        ObjectOutputStream objWriter = new ObjectOutputStream(compressedout);
+////        objWriter.writeObject(message);
+////        objWriter.flush();
+////        gzout.finish();
+////        dout.close();
+//    }
 
     public Object receiveMessage() throws IOException, ClassNotFoundException {
         if (din == null) return "";
         Object incomingMsg = null;
         try {
-//            din.reset();
-//            gzin = new GZIPInputStream(MainThread.mySocket[socketNum].getInputStream());
-            //din = new ObjectInputStream(gzin);
-            incomingMsg = din.readObject();
+            if (MainThread.compressed == 1) {
+                ObjectInputStream objReader = new ObjectInputStream(new CompressedBlockInputStream(din));
+                incomingMsg = objReader.readObject();
+            } else {
+                incomingMsg = din.readObject();
+            }
 //            din.close();
 //            gzin.close();
         }catch (ArrayStoreException ase) {
