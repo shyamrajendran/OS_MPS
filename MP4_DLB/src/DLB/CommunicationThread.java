@@ -27,7 +27,7 @@ public class CommunicationThread extends Thread {
     }
 
     public void setUpStreams() throws IOException {
-        gzout = new GZIPOutputStream(MainThread.mySocket[socketNum].getOutputStream());
+        gzout = new GZIPOutputStream(MainThread.mySocket[socketNum].getOutputStream(), true);
         gzin = new GZIPInputStream(MainThread.mySocket[socketNum].getInputStream());
 
         dout = new ObjectOutputStream(MainThread.mySocket[socketNum].getOutputStream());
@@ -44,6 +44,12 @@ public class CommunicationThread extends Thread {
 
     public synchronized void sendMessage(Object message) throws IOException {
         if (dout == null) return;
+        //dout.writeUTF(message);
+        //dout = new ObjectOutputStream(gzout);
+        //dout.reset();
+        //dout.writeObject(message);
+        //dout.flush();
+	    //gzout.flush();
 
         if (MainThread.compressed == 1) {
             ObjectOutputStream objWriter = new ObjectOutputStream(compressedout);
@@ -56,30 +62,14 @@ public class CommunicationThread extends Thread {
         }
     }
 
-
-    //orginal code
-//    public synchronized void sendMessage(Object message) throws IOException {
-//        if (dout == null) return;
-//        //dout.writeUTF(message);
-//        //dout = new ObjectOutputStream(gzout);
-//        dout.reset();
-////        gzout = new GZIPOutputStream(MainThread.mySocket[socketNum].getOutputStream());
-////        dout = new ObjectOutputStream(gzout);
-//        dout.writeObject(message);
-//        dout.flush();
-//
-////        //////////////////////////////////////////
-////        ObjectOutputStream objWriter = new ObjectOutputStream(compressedout);
-////        objWriter.writeObject(message);
-////        objWriter.flush();
-////        gzout.finish();
-////        dout.close();
-//    }
-
     public Object receiveMessage() throws IOException, ClassNotFoundException {
         if (din == null) return "";
         Object incomingMsg = null;
         try {
+//            din.reset();
+//            gzin = new GZIPInputStream(MainThread.mySocket[socketNum].getInputStream());
+            //din = new ObjectInputStream(gzin);
+            //incomingMsg = din.readObject();
             if (MainThread.compressed == 1) {
                 ObjectInputStream objReader = new ObjectInputStream(new CompressedBlockInputStream(din));
                 incomingMsg = objReader.readObject();
@@ -88,7 +78,7 @@ public class CommunicationThread extends Thread {
             }
 //            din.close();
 //            gzin.close();
-        }catch (ArrayStoreException ase) {
+        } catch (ArrayStoreException ase) {
             return null;
         }
         String inString = incomingMsg.toString();
@@ -225,6 +215,7 @@ public class CommunicationThread extends Thread {
             }
         }
         try {
+            //gzout.finish();
             dout.close();
             din.close();
         } catch (IOException e) {
